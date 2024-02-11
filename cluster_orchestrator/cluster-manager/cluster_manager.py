@@ -82,7 +82,6 @@ def deploy_task(system_job_id, instance_number):
 
 @app.route("/api/result/<system_job_id>/<instance_number>", methods=["POST"])
 def get_scheduler_result_and_propagate_to_edge(system_job_id, instance_number):
-    # print(request)
     app.logger.info("Incoming Request /api/result - received cluster_scheduler result")
     data = request.json  # get POST body
     app.logger.info(data)

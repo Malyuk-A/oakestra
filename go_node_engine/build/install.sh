@@ -30,7 +30,7 @@ else
 fi
 
 #install latest version
-sudo cp NodeEngine_$1 /bin/NodeEngine
+sudo cp bin/NodeEngine_$1 /bin/NodeEngine
 sudo chmod 755 /bin/NodeEngine
 
 [ $? -eq 0 ] && echo "Done, installation successful" || echo "Installation failed, errors reported!"

@@ -37,7 +37,7 @@ def insert_job(microservice):
 def create_services_of_app(username, data, force=False):
     logging.log(logging.DEBUG, data)
     try:
-        parse_sla_json(data)
+        data = parse_sla_json(data)
     except SLAFormatError as e:
         logging.log(logging.ERROR, e)
         return {"message": e}, 422
@@ -109,7 +109,7 @@ def delete_service(username, serviceid):
     return False
 
 
-def update_service(username, sla, serviceid):
+def update_service(username, sla, serviceid, replace=None):
     # TODO Check fields and redeploy service
     # TODO this function is currently causing a lof of issues as such it is commented it out.
     # https://github.com/oakestra/oakestra/pull/282#discussion_r1526433174

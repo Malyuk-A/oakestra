@@ -1,0 +1,3 @@
+[submodule "oakestra-net"]
+	path = oakestra-net
+	url = https://github.com/oakestra/oakestra-net

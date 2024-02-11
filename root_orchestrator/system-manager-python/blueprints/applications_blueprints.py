@@ -1,5 +1,6 @@
 from blueprints.schema_wrapper import SchemaWrapper
 from bson import json_util
+from ext_requests.apps_db import mongo_find_app_by_name_and_namespace, mongo_get_all_applications
 from ext_requests.user_db import mongo_get_user_by_name
 from flask import request
 from flask.views import MethodView
@@ -13,6 +14,7 @@ from roles.securityUtils import Role, get_jwt_organization, require_role
 from services.application_management import (
     delete_app,
     get_all_applications,
+    get_app_by_name_and_namespace,
     get_user_app,
     get_user_apps,
     register_app,
@@ -82,6 +84,17 @@ class ApplicationController(MethodView):
             return {"message": "Application is updated"}
         except ConnectionError as e:
             abort(404, {"message": e})
+
+
+@applicationblp.route("/<appnamespace>/<appname>")
+class AlternativeApplicationController(Resource):
+    @applicationsblp.response(200, SchemaWrapper(sla_schema), content_type="application/json")
+    @jwt_required()
+    def get(self, appnamespace, appname, *args, **kwargs):
+        try:
+            return json_util.dumps(get_app_by_name_and_namespace(appname, appnamespace))
+        except Exception as e:
+            return abort(404, {"message": e})
 
 
 @applicationblp.route("/")

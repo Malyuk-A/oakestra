@@ -3,7 +3,6 @@ from resource_abstractor_client import cluster_operations
 
 def calculate(job_id, job):
     print("calculating...")
-
     constraints = job.get("constraints")
     if constraints is not None:
         return constraint_based_scheduling(job, constraints)
