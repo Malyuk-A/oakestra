@@ -1,6 +1,7 @@
 import logging
 from typing import Union
 
+from icecream import ic
 from mongodb_client import mongo_find_all_active_nodes
 from oakestra_utils.types.statuses import NegativeSchedulingStatus
 
@@ -25,6 +26,7 @@ def constraint_based_scheduling(job: dict, constraints) -> Union[dict, NegativeS
             return deploy_on_best_among_desired_nodes(job, constraint.get("node"))
         if constraint_type == "addons":
             for node in mongo_find_all_active_nodes():
+                print("AAAAAAAAA", ic.format(node, node["node_info"]))
                 node_info = node["node_info"]
                 if (
                     node_info.get("supported_addons")

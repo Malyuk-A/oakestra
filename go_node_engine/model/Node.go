@@ -26,8 +26,7 @@ const (
 
 type AddonType string
 const (
-// Example Addon:
-// 	FLOPS AddonType = "FLOps"
+ 	FLOPS AddonType = "FLOps"
  )
 
 type Node struct {
@@ -116,7 +115,6 @@ func (n *Node) updateDynamicInfo() {
 	n.GpuUsage = getGpuUsage()
 	n.GpuCores = getGpuCores()
 	n.GpuTemp = getGpuTemp()
-
 }
 
 func SetNodeId(id string) {
