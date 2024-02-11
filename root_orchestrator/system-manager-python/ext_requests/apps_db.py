@@ -24,12 +24,10 @@ def mongo_insert_job(microservice):
         "job_name": job_name,
         **microservice,  # The content of the input file
     }
-
     # job insertion
     new_job = db.mongo_services.find_one_and_update(
         {"job_name": job_name}, {"$set": job_content}, upsert=True, return_document=True
     )
-    db.app.logger.info("MONGODB - job {} inserted".format(str(new_job.get("_id"))))
     return str(new_job.get("_id"))
 
 

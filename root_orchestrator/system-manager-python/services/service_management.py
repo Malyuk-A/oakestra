@@ -30,13 +30,17 @@ def create_services_of_app(username, data, force=False):
     application = mongo_find_app_by_id(app_id, username)
     if application is None:
         return {"message": "application not found"}, 404
-    for microservice in data.get("applications")[0].get("microservices"):
+
+    microservices = data.get("applications")[0].get("microservices")
+    for i, microservice in enumerate(microservices):
         # Insert job into database
         service = generate_db_structure(application, microservice)
         last_service_id = mongo_insert_job(service)
+        microservices[i]["microserviceID"] = last_service_id
         # Insert job into app's services list
         mongo_set_microservice_id(last_service_id)
         add_service_to_app(app_id, last_service_id, username)
+
         # Inform network plugin about the new service
         try:
             net_inform_service_deploy(service, str(last_service_id))
@@ -44,6 +48,7 @@ def create_services_of_app(username, data, force=False):
             delete_service(username, str(last_service_id))
             return {"message": "failed to deploy service"}, 500
         # TODO: check if service deployed already etc. force=True must force the insertion anyway
+
     return {"job_id": str(last_service_id)}, 200
 
 
@@ -63,12 +68,25 @@ def delete_service(username, serviceid):
     return False
 
 
-def update_service(username, sla, serviceid):
+def update_service(username, sla, serviceid, replace=None):
     # TODO Check fields and redeploy service
     apps = mongo_get_applications_of_user(username)
     for application in apps:
         if serviceid in application["microservices"]:
+            if replace:
+                delete_service(username, serviceid)
+                result, status = create_services_of_app(username, sla)
+                if status != 200:
+                    return {"message": "failed to replace service"}, status
+                updated_service_id = result["job_id"]
+                updated_service = get_service(username, updated_service_id)
+                return updated_service, 200
+
+            job = sla["applications"][0]["microservices"][0]
+            if "_id" in job:
+                del job["_id"]
             return mongo_update_job(serviceid, sla), 200
+
     return {"message": "service not found"}, 404
 
 
@@ -76,11 +94,10 @@ def user_services(appid, username):
     application = mongo_find_app_by_id(appid, username)
     if application is None:
         return {"message": "app not found"}, 404
-
     return mongo_get_jobs_of_application(appid), 200
 
 
-def get_service(serviceid, username):
+def get_service(username, serviceid):
     apps = mongo_get_applications_of_user(username)
     for application in apps:
         if serviceid in application["microservices"]:

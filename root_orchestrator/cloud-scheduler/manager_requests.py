@@ -1,14 +1,6 @@
-import os
-
 import requests
 from bson.json_util import dumps
-
-SYSTEM_MANAGER_ADDR = (
-    "http://"
-    + os.environ.get("SYSTEM_MANAGER_URL")
-    + ":"
-    + str(os.environ.get("SYSTEM_MANAGER_PORT"))
-)
+from common import SYSTEM_MANAGER_ADDR
 
 
 def manager_request(cluster, job_id, job, replicas):

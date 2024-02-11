@@ -27,7 +27,6 @@ def register_app(applications, userid):
             return {
                 "message": "An application with the same name and namespace exists already"
             }, 409
-
         if "action" in application:
             del application["action"]
         if "_id" in application:
@@ -36,7 +35,6 @@ def register_app(applications, userid):
         microservices = application.get("microservices")
         application["microservices"] = []
         app_id = mongo_add_application(application)
-
         # register microservices as well if any
         if app_id:
             if len(microservices) > 0:
@@ -58,7 +56,6 @@ def register_app(applications, userid):
                     print(traceback.format_exc())
                     delete_app(app_id, userid)
                     return {"message": "error during the registration of the microservices"}, 500
-
     return list(mongo_get_applications_of_user(userid)), 200
 
 
@@ -84,6 +81,10 @@ def all_apps():
 
 def get_user_app(userid, appid):
     return mongo_find_app_by_id(appid, userid)
+
+
+def get_app_by_name_and_namespace(app_name, app_namespace):
+    return mongo_find_app_by_name_and_namespace(app_name, app_namespace)
 
 
 def valid_app_requirements(app):
