@@ -67,6 +67,7 @@ def start_calc(job_id, job):
     # print(i)
 
     scheduling_status, scheduling_result = calculate(job_id, job)
+
     print(scheduling_result)
     if scheduling_status == "negative":
         job_operations.update_job_status(job_id, scheduling_result)
@@ -84,4 +85,4 @@ def start_calc(job_id, job):
 
 
 if __name__ == "__main__":
-    app.run(debug=False, host="0.0.0.0", port=MY_PORT)
+    app.run(debug=False, host="::", port=MY_PORT)

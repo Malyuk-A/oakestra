@@ -31,6 +31,7 @@ sla_schema = {
                                 "code": {"type": "string"},
                                 "state": {"type": "string"},
                                 "port": {"type": "string"},
+                                "one_shot": {"type": "boolean", "default": False},
                                 "cmd": {
                                     "type": "array",
                                     "items": {
@@ -49,7 +50,9 @@ sla_schema = {
                                     "type": "object",
                                     "properties": {
                                         "rr_ip": {"type": "string"},
+                                        "rr_ip_v6": {"type": "string"},
                                         "closest_ip": {"type": "string"},
+                                        "closest_ip_v6": {"type": "string"},
                                         "instances": {
                                             "type": "array",
                                             "items": {

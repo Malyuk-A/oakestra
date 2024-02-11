@@ -23,7 +23,8 @@ services:
       - CLOUD_SCHEDULER_PORT=10004
       - NET_PLUGIN_URL=root_service_manager
       - NET_PLUGIN_PORT=10099
-
+      - ROOT_MQTT_BROKER_PORT=9027
+      - ROOT_MQTT_BROKER_URL=root_mqtt
 
   # MongoDB in Root Orchestrator
   mongo_root:
@@ -87,7 +88,8 @@ services:
       - 3000:3000
 
   dashboard:
-    image: ghcr.io/oakestra/dashboard:latest
+    #image: ghcr.io/oakestra/dashboard:latest
+    image: ghcr.io/oakestra/dashboard:alpha-v0.4.205
     ports:
       - '80:80'
     restart: unless-stopped
@@ -131,7 +133,6 @@ services:
       - CLOUD_MONGO_PORT=10007
     depends_on:
       - mongo_root
-
 
 volumes:
   mongodb_data:
