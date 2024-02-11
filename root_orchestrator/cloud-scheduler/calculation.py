@@ -1,12 +1,13 @@
 from typing import Union
 
+from icecream import ic
 from oakestra_utils.types.statuses import NegativeSchedulingStatus
 from resource_abstractor_client import cluster_operations
 
 
 def calculate(job: dict) -> Union[dict, NegativeSchedulingStatus]:
+    ic(0)
     print("calculating...")
-
     constraints = job.get("constraints")
     if constraints is not None and len(constraints) > 0:
         return constraint_based_scheduling(job, constraints)
@@ -15,20 +16,39 @@ def calculate(job: dict) -> Union[dict, NegativeSchedulingStatus]:
 
 
 def constraint_based_scheduling(job: dict, constraints) -> Union[dict, NegativeSchedulingStatus]:
+    print(ic.format(1, constraints))
+    # NOTE: To avoid duplicates using a Set is preferred, but one cannot simply add a dict ot a set.
     filtered_active_clusters = []
+
+    def append_cluster(cluster: dict) -> None:
+        if cluster not in filtered_active_clusters:
+            filtered_active_clusters.append(cluster)
+
+    active_clusters = list(cluster_operations.get_resources(active=True))
     for constraint in constraints:
         constraint_type = constraint.get("type")
         if constraint_type == "direct":
             return direct_service_mapping(job, constraint.get("cluster"))
+        # TODO: Turn the constraints into an enum - put them into the oak-utils library.
         if constraint_type == "addons":
-            for cluster in cluster_operations.get_resources(active=True) or []:
+            ic(2)
+            for cluster in active_clusters:
                 if (
                     cluster.get("supported_addons")
                     and constraint.get("needs")
                     and set(constraint.get("needs")).issubset(set(cluster.get("supported_addons")))
                 ):
-                    filtered_active_clusters.append(cluster)
+                    ic(3)
+                    append_cluster(cluster)
+        if constraint_type == "clusters":
+            ic(4)
+            for cluster in active_clusters:
+                cluster_name = cluster.get("cluster_name")
+                if cluster_name and cluster_name in constraint.get("allowed"):
+                    ic(5)
+                    append_cluster(cluster)
 
+    print(ic.format(6, filtered_active_clusters))
     return greedy_load_balanced_algorithm(job=job, active_clusters=filtered_active_clusters)
 
 
@@ -89,6 +109,7 @@ def greedy_load_balanced_algorithm(
     # Return the cluster with the most cpu+ram.
     if job.get("virtualization") == "unikernel":
         arch = job.get("arch")
+
         for cluster in qualified_clusters:
             aggregation = cluster.get("aggregation_per_architecture", None)
             for a in arch:

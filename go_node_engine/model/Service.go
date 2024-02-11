@@ -18,7 +18,8 @@ type Service struct {
 	UnikernelImages []string `json:"vm_images"`
 	Architectures   []string `json:"arch"`
 	Pid             int
-	OneShot		bool	 `json:"one_shot"`
+	OneShot			bool	 `json:"one_shot"`
+	Privileged      bool     `json:"privileged"`
 }
 
 type Resources struct {
