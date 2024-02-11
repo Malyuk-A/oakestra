@@ -1,14 +1,16 @@
 import argparse
 from typing import Any
 
-from oak_dev_utils.applications.default import create_default_app_with_services
+from oak_dev_utils.applications.create import create_app_via_sla
 from oak_dev_utils.oak_args_parse.types import Subparsers
+from oak_dev_utils.util.SLAs.enum import KnownSLA
 
 
 def aux_create_application(args: Any) -> None:
-    if args.default:
-        create_default_app_with_services()
+    if args.sla:
+        create_app_via_sla(args.sla)
     else:
+        # More fine grained dynamic app creation could be implemented.
         pass
 
 
@@ -22,9 +24,11 @@ def prepare_applications_create_argparser(applications_subparsers: Subparsers) -
         formatter_class=argparse.RawTextHelpFormatter,
     )
     applications_create_parser.add_argument(
-        "-d",
-        "--default",
-        help="creates the default application with services based on the default SLA",
-        action="store_true",
+        "-s",
+        "--sla",
+        help="creates an application based on a KnowsSLA (if is has its own enum)",
+        type=KnownSLA,
+        choices=KnownSLA,
+        default=KnownSLA.DEFAULT,
     )
     applications_create_parser.set_defaults(func=aux_create_application)
