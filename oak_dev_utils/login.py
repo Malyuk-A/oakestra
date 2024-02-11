@@ -1,6 +1,6 @@
 import requests
 
-from oak_dev_utils.common import CORE_URL
+from oak_dev_utils.util.common import CORE_URL
 
 login_query = {
     "url": f"{CORE_URL}/api/auth/login",

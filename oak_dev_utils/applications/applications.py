@@ -3,8 +3,8 @@ from typing import List
 
 import requests
 
-from oak_dev_utils.common import CORE_URL
-from oak_dev_utils.dev_logger import dev_logger
+from oak_dev_utils.util.common import CORE_URL
+from oak_dev_utils.util.dev_logger import dev_logger
 
 
 def get_applications(bearer_auth_token: str) -> List:

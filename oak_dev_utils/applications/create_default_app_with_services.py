@@ -2,7 +2,7 @@ import json
 
 import requests
 
-from oak_dev_utils.common import CORE_URL, DEV_UTILS_PATH
+from oak_dev_utils.util.common import CORE_URL, DEV_UTILS_PATH
 
 
 def create_default_app_with_services(bearer_auth_token: str) -> None:

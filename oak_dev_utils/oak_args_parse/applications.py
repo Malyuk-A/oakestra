@@ -1,7 +1,7 @@
 import argparse
 from typing import Any
 
-from oak_dev_utils.applications import display_current_applications
+from oak_dev_utils.applications.applications import display_current_applications
 from oak_dev_utils.oak_args_parse.types import Subparsers
 
 STATUS_HELP_TEXT = "displays the currently available/active applications"
