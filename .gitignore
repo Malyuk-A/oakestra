@@ -58,3 +58,7 @@ deployment_helper/support/EdgeIO*
 *.zip
 .vscode/settings.json
 .vscode/launch.json
+NetManager
+NetManager_amd64.tar.gz
+NodeEngine_amd64
+NodeEngine_amd64.tar.gz
