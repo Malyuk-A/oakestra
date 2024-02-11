@@ -71,3 +71,7 @@ ENV/
 
 # macOS system
 .DS_Store
+NetManager
+NetManager_amd64.tar.gz
+NodeEngine_amd64
+NodeEngine_amd64.tar.gz

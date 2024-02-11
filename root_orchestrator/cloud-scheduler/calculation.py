@@ -3,8 +3,8 @@ from resource_abstractor_client import cluster_operations
 
 def calculate(job_id, job):
     print("calculating...")
-
     constraints = job.get("constraints")
+
     if constraints is not None:
         return constraint_based_scheduling(job, constraints)
     else:
@@ -84,6 +84,7 @@ def greedy_load_balanced_algorithm(job, active_clusters=None):
     # return the cluster with the most cpu+ram
     if job.get("virtualization") == "unikernel":
         arch = job.get("arch")
+
         for cluster in qualified_clusters:
             aggregation = cluster.get("aggregation_per_architecture", None)
             for a in arch:

@@ -109,7 +109,7 @@ def delete_service(username, serviceid):
     return False
 
 
-def update_service(username, sla, serviceid):
+def update_service(username, sla, serviceid, replace=None):
     # TODO Check fields and redeploy service
     # TODO this function is currently causing a lof of issues as such it is commented it out.
     # https://github.com/oakestra/oakestra/pull/282#discussion_r1526433174

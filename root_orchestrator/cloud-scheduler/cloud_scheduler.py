@@ -67,6 +67,7 @@ def start_calc(job_id, job):
     # print(i)
 
     scheduling_status, scheduling_result = calculate(job_id, job)
+
     print(scheduling_result)
     if scheduling_status == "negative":
         job_operations.update_job_status(job_id, scheduling_result)

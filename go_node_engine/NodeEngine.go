@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"go_node_engine/extensions/flops"
 	"go_node_engine/jobs"
 	"go_node_engine/logger"
 	"go_node_engine/model"
@@ -18,11 +19,15 @@ var clusterAddress = flag.String("a", "localhost", "Address of the cluster orche
 var clusterPort = flag.String("p", "10000", "Port of the cluster orchestrator")
 var overlayNetwork = flag.Int("n", -1, "Port of the NetManager component, if any. This enables the overlay network across nodes")
 var UnikernelSupport = flag.Bool("u", false, "Set to enable Unikernel support")
+var FederatedLearningSupport = flag.Bool("f", false, "Set to enable Federated Learning, including gathering of ML data.")
 var LogDirectory = flag.String("logs", "/tmp", "Directory for application's logs")
 
 const MONITORING_CYCLE = time.Second * 2
 
 func main() {
+
+	logger.InfoLogger().Printf("AAAREeezzzzz")
+
 	flag.Parse()
 
 	//set log directory
@@ -36,6 +41,12 @@ func main() {
 		unikernelRuntime := virtualization.GetUnikernelRuntime()
 		defer unikernelRuntime.StopUnikernelRuntime()
 	}
+
+	if *FederatedLearningSupport {
+		model.GetNodeInfo().AddEnabledExtensions(model.FEDERATED_LEARNING)
+		flops.HandleFLOpsDataManager()
+	}
+
 	//hadshake with the cluster orchestrator to get mqtt port and node id
 	handshakeResult := clusterHandshake()
 
@@ -50,7 +61,6 @@ func main() {
 
 	//binding the node MQTT client
 	mqtt.InitMqtt(handshakeResult.NodeId, *clusterAddress, handshakeResult.MqttPort)
-
 	//starting node status background job.
 	jobs.NodeStatusUpdater(MONITORING_CYCLE, mqtt.ReportNodeInformation)
 	//starting container resources background monitor.
@@ -80,3 +90,4 @@ func clusterHandshake() requests.HandshakeAnswer {
 	model.SetNodeId(clusterReponse.NodeId)
 	return clusterReponse
 }
+

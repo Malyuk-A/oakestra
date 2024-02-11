@@ -19,11 +19,16 @@ import (
 )
 
 type RuntimeType string
-
 const (
 	CONTAINER_RUNTIME RuntimeType = "docker"
 	UNIKERNEL_RUNTIME RuntimeType = "unikernel"
 )
+
+type ExtensionType string
+const (
+	FEDERATED_LEARNING ExtensionType = "federated_learning"
+)
+
 
 type Node struct {
 	Id             string            `json:"id"`
@@ -45,6 +50,7 @@ type Node struct {
 	GpuMemUsage    float64           `json:"gpu_mem_used"`
 	GpuTotMem      float64           `json:"gpu_tot_mem"`
 	Technology     []RuntimeType     `json:"technology"`
+	Extensions	   []ExtensionType   `json:"extensions"`
 	Overlay        bool
 	LogDirectory   string
 	NetManagerPort int
@@ -62,6 +68,7 @@ func GetNodeInfo() *Node {
 			CpuArch:    runtime.GOARCH,
 			Port:       getPort(),
 			Technology: make([]RuntimeType, 0),
+			Extensions: make([]ExtensionType, 0),
 			Overlay:    false,
 		}
 	})
@@ -109,7 +116,6 @@ func (n *Node) updateDynamicInfo() {
 	n.GpuUsage = getGpuUsage()
 	n.GpuCores = getGpuCores()
 	n.GpuTemp = getGpuTemp()
-
 }
 
 func SetNodeId(id string) {
@@ -234,6 +240,14 @@ func (n *Node) AddSupportedTechnology(tech RuntimeType) {
 
 func (n *Node) GetSupportedTechnologyList() []RuntimeType {
 	return n.Technology
+}
+
+func (n *Node) AddEnabledExtensions(ext ExtensionType) {
+	n.Extensions = append(n.Extensions, ext)
+}
+
+func (n *Node) GetEnabledExtensionsList() []ExtensionType {
+	return n.Extensions
 }
 
 func getGpuDriver() string {

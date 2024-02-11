@@ -69,6 +69,7 @@ def status():
 
 @app.route("/api/deploy/<system_job_id>/<instance_number>", methods=["GET", "POST"])
 def deploy_task(system_job_id, instance_number):
+
     app.logger.info("Incoming Request /api/deploy")
     job = request.json  # contains job_id and job_description
 
@@ -83,6 +84,7 @@ def deploy_task(system_job_id, instance_number):
 @app.route("/api/result/<system_job_id>/<instance_number>", methods=["POST"])
 def get_scheduler_result_and_propagate_to_edge(system_job_id, instance_number):
     # print(request)
+
     app.logger.info("Incoming Request /api/result - received cluster_scheduler result")
     data = request.json  # get POST body
     app.logger.info(data)
@@ -140,6 +142,7 @@ def http_node_registration():
     data.get("token")  # registration_token
     # TODO: check and generate tokens
     client_id = mongo_upsert_node({"ip": request.remote_addr, "node_info": data})
+
     response = {
         "id": str(client_id),
         "MQTT_BROKER_PORT": os.environ.get("MQTT_BROKER_PORT"),
