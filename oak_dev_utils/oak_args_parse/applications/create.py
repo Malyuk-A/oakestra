@@ -1,7 +1,7 @@
 import argparse
 from typing import Any
 
-from oak_dev_utils.applications.general import create_default_app_with_services
+from oak_dev_utils.applications.default import create_default_app_with_services
 from oak_dev_utils.oak_args_parse.types import Subparsers
 
 

@@ -1,7 +1,7 @@
 import argparse
 from typing import Any
 
-from oak_dev_utils.applications.general import delete_application
+from oak_dev_utils.applications.delete import delete_application
 from oak_dev_utils.oak_args_parse.types import Subparsers
 
 APP_ID_HELP_TEXT = """
