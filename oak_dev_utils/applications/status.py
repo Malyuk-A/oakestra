@@ -1,10 +1,9 @@
 from oak_dev_utils.applications.get import get_applications
-from oak_dev_utils.login import get_login_token
 from oak_dev_utils.util.dev_logger import dev_logger
 
 
 def display_current_applications() -> None:
-    current_applications = get_applications(get_login_token())
+    current_applications = get_applications()
 
     def log_aux(key: str, value: str) -> None:
         dev_logger.info(f"   {key}: '{value}'")
