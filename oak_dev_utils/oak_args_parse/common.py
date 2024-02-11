@@ -5,6 +5,7 @@ import argparse
 import argcomplete
 
 from oak_dev_utils.oak_args_parse.applications.main import prepare_applications_argparsers
+from oak_dev_utils.oak_args_parse.services.main import prepare_services_argparsers
 
 
 def parse_arguments_and_execute() -> None:
@@ -17,6 +18,7 @@ def parse_arguments_and_execute() -> None:
     )
 
     prepare_applications_argparsers(subparsers)
+    prepare_services_argparsers(subparsers)
 
     argcomplete.autocomplete(parser)
     args = parser.parse_args()

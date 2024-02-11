@@ -15,4 +15,7 @@ def display_current_applications() -> None:
         log_aux("name", application["application_name"])
         log_aux("ns", application["application_namespace"])
         log_aux("desc", application["application_desc"])
-        log_aux("microservices", len(application["microservices"]))
+        log_aux(
+            "microservices",
+            f"{len(application['microservices'])}: {application['microservices']}",
+        )
