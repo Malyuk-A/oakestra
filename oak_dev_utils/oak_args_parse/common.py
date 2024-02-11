@@ -4,8 +4,7 @@ import argparse
 
 import argcomplete
 
-from oak_dev_utils.login import login_and_get_token
-from oak_dev_utils.oak_args_parse.applications import prepare_applications_argparsers
+from oak_dev_utils.oak_args_parse.applications.main import prepare_applications_argparsers
 
 
 def parse_arguments_and_execute() -> None:
@@ -21,6 +20,4 @@ def parse_arguments_and_execute() -> None:
 
     argcomplete.autocomplete(parser)
     args = parser.parse_args()
-    bearer_auth_token = login_and_get_token()
-    args.token = bearer_auth_token
     args.func(args)
