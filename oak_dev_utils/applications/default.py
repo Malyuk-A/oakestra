@@ -11,6 +11,7 @@ def create_default_app_with_services() -> None:
     with open(DEV_UTILS_PATH / "applications" / "default_SLA.json", "r") as f:
         default_SLA = json.load(f)
 
-    url, headers, data = create_api_query("/api/application/", default_SLA)
+    url, headers, data = create_api_query("/api/application/", data=default_SLA)
+    
     response = requests.post(url, headers=headers, json=data)
     check_api_response(response, what_should_happen="Create new default application with services")
