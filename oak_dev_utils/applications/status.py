@@ -10,7 +10,7 @@ def display_applications(applications: List) -> None:
     def log_aux(key: str, value: str) -> None:
         dev_logger.info(f"   {key}: '{value}'")
 
-    dev_logger.info(f"current apps: '{len(applications)}'")
+    dev_logger.info(f"Current apps: '{len(applications)}'")
     for i, application in enumerate(applications):
         dev_logger.info(f" App '{i}':")
         log_aux("id", application["applicationID"])

@@ -28,7 +28,7 @@ def get_applications(bearer_auth_token: str) -> List:
 def create_default_app_with_services() -> None:
 
     default_SLA = ""
-    with open(DEV_UTILS_PATH / "default_SLA.json", "r") as f:
+    with open(DEV_UTILS_PATH / "applications" / "default_SLA.json", "r") as f:
         default_SLA = json.load(f)
 
     application_creation_query = {
@@ -61,7 +61,7 @@ def delete_application(app_id: str) -> None:
         },
     }
 
-    application_deletion_response = requests.post(
+    application_deletion_response = requests.delete(
         application_deletion_query["url"],
         headers=application_deletion_query["headers"],
     )

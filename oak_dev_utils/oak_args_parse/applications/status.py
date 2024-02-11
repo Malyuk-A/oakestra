@@ -1,6 +1,6 @@
 import argparse
 
-from oak_dev_utils.applications.display import display_current_applications
+from oak_dev_utils.applications.status import display_current_applications
 from oak_dev_utils.oak_args_parse.types import Subparsers
 
 
