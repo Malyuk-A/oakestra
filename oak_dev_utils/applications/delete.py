@@ -12,4 +12,5 @@ def delete_application(app_id: str) -> None:
 
 def delete_all_applications() -> None:
     for app in get_applications():
-        delete_application(app.app_id)
+        delete_application(app["applicationID"])
+    
