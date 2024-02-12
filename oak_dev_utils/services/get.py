@@ -17,3 +17,14 @@ def get_all_services(app_id: str = None) -> List:
     )
     get_all_services_response_parsed = json.loads(response.json())
     return get_all_services_response_parsed
+
+
+def get_single_service(service_id: str):
+    url, headers, _ = create_api_query(f"/api/service/{service_id}")
+    response = requests.get(url, headers=headers)
+    check_api_response_quietly(
+        response,
+        what_should_happen=(f"Get single service '{service_id}'"),
+    )
+    get_single_service_response_parsed = json.loads(response.json())
+    return get_single_service_response_parsed

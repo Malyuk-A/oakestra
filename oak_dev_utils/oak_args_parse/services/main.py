@@ -1,6 +1,7 @@
 import argparse
 from typing import Any
 
+from oak_dev_utils.oak_args_parse.services.deployment import prepare_services_deployment_argparser
 from oak_dev_utils.oak_args_parse.services.status import prepare_services_display_argparser
 from oak_dev_utils.oak_args_parse.types import Subparsers
 
@@ -23,3 +24,4 @@ def prepare_services_argparsers(subparsers: Subparsers) -> None:
     )
 
     prepare_services_display_argparser(services_subparsers)
+    prepare_services_deployment_argparser(services_subparsers)
