@@ -69,6 +69,9 @@ def status():
 
 @app.route("/api/deploy/<system_job_id>/<instance_number>", methods=["GET", "POST"])
 def deploy_task(system_job_id, instance_number):
+
+    print("E#" * 15)
+
     app.logger.info("Incoming Request /api/deploy")
     job = request.json  # contains job_id and job_description
 
@@ -77,17 +80,22 @@ def deploy_task(system_job_id, instance_number):
     except Exception:
         return "", 500
 
+    print("W#" * 15)
     return "", 200
 
 
 @app.route("/api/result/<system_job_id>/<instance_number>", methods=["POST"])
 def get_scheduler_result_and_propagate_to_edge(system_job_id, instance_number):
     # print(request)
+
+    print("I#" * 15)
+
     app.logger.info("Incoming Request /api/result - received cluster_scheduler result")
     data = request.json  # get POST body
     app.logger.info(data)
 
     if data.get("found", False):
+        print("I1#" * 15)
         resulting_node_id = data.get("node").get("_id")
 
         mongo_update_job_status(system_job_id, instance_number, "NODE_SCHEDULED", data.get("node"))
@@ -99,6 +107,7 @@ def get_scheduler_result_and_propagate_to_edge(system_job_id, instance_number):
         # Publish job
         mqtt_publish_edge_deploy(resulting_node_id, job, instance_number)
     else:
+        print("I2#" * 15)
         mongo_update_job_status(system_job_id, instance_number, "NO_WORKER_CAPACITY", None)
     return "ok"
 

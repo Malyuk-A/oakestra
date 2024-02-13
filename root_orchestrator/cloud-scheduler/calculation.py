@@ -1,11 +1,13 @@
 from resource_management import cluster_operations
-
+from 
 
 def calculate(job_id, job):
-    print("A#" * 15)
-    print("Kent22#" * 15)
     print("calculating...")
     constraints = job.get("constraints")
+
+    if job.get("image") and job.get("image").startswith("https://github.com/"):
+        handle_fl_job_request_preperations(job)
+
     if constraints is not None:
         return constraint_based_scheduling(job, constraints)
     else:
@@ -53,11 +55,10 @@ def first_fit_algorithm(job):
 
 def greedy_load_balanced_algorithm(job, active_clusters=None):
     """Which of the clusters have the most capacity for a given job"""
+
     if active_clusters is None:
         active_clusters = cluster_operations.get_resources(active=True)
-        print("C#" * 15)
         print(active_clusters)
-        print("C+" * 15)
     qualified_clusters = []
 
     # memory = 0
@@ -73,10 +74,7 @@ def greedy_load_balanced_algorithm(job, active_clusters=None):
     #     vgpu = job.get("vgpu")
 
     for cluster in active_clusters:
-        print("D#" * 15)
-        print("De+" * 15)
         if does_cluster_respects_requirements(cluster, job):
-            print("Z#" * 15)
             qualified_clusters.append(cluster)
 
     target_cluster = None
@@ -90,6 +88,7 @@ def greedy_load_balanced_algorithm(job, active_clusters=None):
     # return the cluster with the most cpu+ram
     if job.get("virtualization") == "unikernel":
         arch = job.get("arch")
+
         for cluster in qualified_clusters:
             aggregation = cluster.get("aggregation_per_architecture", None)
             for a in arch:
@@ -113,6 +112,9 @@ def greedy_load_balanced_algorithm(job, active_clusters=None):
             target_mem = mem
             target_cluster = cluster
 
+    print("A#" * 15)
+    print("target_cluster", target_cluster)
+    print("A+" * 15)
     return "positive", target_cluster
 
 

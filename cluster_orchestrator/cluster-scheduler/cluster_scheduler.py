@@ -70,10 +70,13 @@ def start_calc_deploy(job, job_id, instance_num):
         app, job
     )  # scheduling_result can be a node object
 
+    print("G#" * 15)
+
     if scheduling_status == "negative":
         app.logger.info("No active node found to schedule this job.")
         manager_request(app, None, job, job_id, instance_num)
     else:
+        print("G2#" * 15)
         app.logger.info("Chosen Node: {0}".format(scheduling_result))
         manager_request(app, scheduling_result, job, job_id, instance_num)
         # DONE IN CLUSTER-MANAGER

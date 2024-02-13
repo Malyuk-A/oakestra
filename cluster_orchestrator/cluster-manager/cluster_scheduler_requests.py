@@ -22,10 +22,14 @@ def scheduler_request_deploy(job, system_job_id, instance_number):
     job.__setitem__("scheduled_node", str(job.get("scheduled_node")))  # deserialize ObjectIDs
 
     print(job)
+    print("F#" * 15)
+    print("request_address", request_address)
+    print("f+" * 15)
     try:
         requests.post(request_address, json=job)
     except requests.exceptions.RequestException:
         print("Calling Cluster Scheduler /api/calculate/deploy not successful.")
+    print("V#" * 15)
 
 
 def scheduler_request_replicate(job, replicas):
