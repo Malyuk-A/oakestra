@@ -115,6 +115,8 @@ services:
     depends_on:
       - redis
       - resource_abstractor
+    volumes: #dev
+      - /home/alex/oakestra/root_orchestrator/cloud-scheduler:/app
 
   resource_abstractor:
     image: resource_abstractor
