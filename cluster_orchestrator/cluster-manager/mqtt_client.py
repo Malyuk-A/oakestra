@@ -79,7 +79,7 @@ def mqtt_init(flask_app):
     global mqtt
     global app
     app = flask_app
-    mqtt = paho_mqtt.Client()
+    mqtt = paho_mqtt.Client(paho_mqtt.CallbackAPIVersion.VERSION1)
     mqtt.on_connect = handle_connect
     mqtt.on_message = handle_mqtt_message
     mqtt.reconnect_delay_set(min_delay=1, max_delay=120)

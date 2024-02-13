@@ -2,8 +2,10 @@ from resource_management import cluster_operations
 
 
 def calculate(job_id, job):
-    print("calculating...")
+    print("A#" * 15)
+    print("Z#!" * 15)
 
+    print("calculating...")
     constraints = job.get("constraints")
     if constraints is not None:
         return constraint_based_scheduling(job, constraints)
@@ -52,9 +54,13 @@ def first_fit_algorithm(job):
 
 def greedy_load_balanced_algorithm(job, active_clusters=None):
     """Which of the clusters have the most capacity for a given job"""
+    print("B#" * 15)
 
     if active_clusters is None:
         active_clusters = cluster_operations.get_resources(active=True)
+        print("C#" * 15)
+        print(active_clusters)
+        print("C+" * 15)
     qualified_clusters = []
 
     # memory = 0
@@ -70,7 +76,10 @@ def greedy_load_balanced_algorithm(job, active_clusters=None):
     #     vgpu = job.get("vgpu")
 
     for cluster in active_clusters:
+        print("D#" * 15)
+        print("De+" * 15)
         if does_cluster_respects_requirements(cluster, job):
+            print("Z#" * 15)
             qualified_clusters.append(cluster)
 
     target_cluster = None
