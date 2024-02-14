@@ -1,19 +1,21 @@
 import pathlib
-import shlex
-import subprocess
 from typing import Dict, List
 
-from python_on_whales import DockerClient, docker
+# from python_on_whales import DockerClient, docker
+from python_on_whales import DockerClient
 
 ROOT_FL_MANAGER_CONTAINER_NAME = "root_fl_manager"
 
-ROOT_FL_MANAGER_DOCKER_COMPOSE_LINK_PATH = pathlib.Path(
-    "federated_learning/fl_root_manager_docker_compose_link.yml"
-)
+# ROOT_FL_MANAGER_DOCKER_COMPOSE_LINK_PATH = pathlib.Path(
+#     "federated_learning/fl_root_manager_docker_compose_link.yml"
+# )
+ROOT_FL_MANAGER_DOCKER_COMPOSE_LINK_PATH = pathlib.Path("federated_learning/docker-compose.yml")
+
+docker_client = DockerClient(compose_files=[ROOT_FL_MANAGER_DOCKER_COMPOSE_LINK_PATH])
 
 
 def is_fl_root_mananger_running() -> bool:
-    running_containers = docker.ps()
+    running_containers = docker_client.ps()
     for container in running_containers:
         print("container name: ", container.name)
 
@@ -27,10 +29,9 @@ def is_fl_root_mananger_running() -> bool:
 
 def start_fl_root_manager() -> None:
     print("A" * 15)
-
-    docker_client = DockerClient(compose_files=[ROOT_FL_MANAGER_DOCKER_COMPOSE_LINK_PATH])
-    print("B" * 15)
+    print(docker_client.compose.is_installed())
     docker_client.compose.up()
+    print("B" * 15)
 
     # try:
     #     subprocess.check_call(
@@ -41,7 +42,7 @@ def start_fl_root_manager() -> None:
     # else:
     #     print("Docker Compose started successfully.")
 
-    print("C" * 15)
+    # print("C" * 15)
 
 
 def check_for_fl_services(microservices: List[Dict]):
@@ -53,6 +54,7 @@ def check_for_fl_services(microservices: List[Dict]):
             and service.get("code").startswith("https://github.com/")
         ):
             if not already_checked_fl_root_manager_running:
+
                 if not is_fl_root_mananger_running():
                     start_fl_root_manager()
                 already_checked_fl_root_manager_running = True
