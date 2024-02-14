@@ -113,9 +113,6 @@ def greedy_load_balanced_algorithm(job, active_clusters=None):
             target_mem = mem
             target_cluster = cluster
 
-    print("A#" * 15)
-    print("target_cluster", target_cluster)
-    print("A+" * 15)
     return "positive", target_cluster
 
 

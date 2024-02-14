@@ -8,6 +8,11 @@ flbp = Blueprint("Federated Learning", "fl", url_prefix="/api/fl")
 class DeployFLInstanceController(MethodView):
     def post(self, serviceid):
         print("serviceid", serviceid)
+
+        # maybe TODO
+        # should check latest repo commit hash - if latest hash is part of current image name return
+        # else terminate all related fl instances and restart fl etc.. this gets complicated quickly - leave out for now
+
         # TODO NEXT
         # implement fl_root_manager
         # should check if root_image_registry already contains image with name of github repo name (infix of URL)

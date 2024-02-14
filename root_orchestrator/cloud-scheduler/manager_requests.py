@@ -7,7 +7,6 @@ def manager_request(cluster, job_id, job, replicas):
     print("sending scheduling result to system-manager...")
     request_address = SYSTEM_MANAGER_ADDR + "/api/result/deploy"
     print(request_address)
-    print("C#" * 15)
     try:
         requests.post(
             request_address,
@@ -15,8 +14,6 @@ def manager_request(cluster, job_id, job, replicas):
         )
     except requests.exceptions.RequestException:
         print("Calling System Manager /api/result/deploy not successful.")
-
-    print("Z#" * 15)
 
 
 def manager_request_replicate(cluster, job_id, job, replicas):

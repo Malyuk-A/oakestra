@@ -2,14 +2,6 @@ version: "3.3"
 
 services:
 
-  root_image_registry:
-    image: registry:2.8.3
-    container_name: root_image_registry
-    expose:
-      - "5072"
-    ports:
-      - "5072:5000"
-
   # System Manager REST API of Root Orchestrator
   system_manager:
     image: system_manager
@@ -31,6 +23,8 @@ services:
       - CLOUD_SCHEDULER_PORT=10004
       - NET_PLUGIN_URL=root_service_manager
       - NET_PLUGIN_PORT=10099
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
 
   # MongoDB in Root Orchestrator
@@ -141,7 +135,6 @@ services:
       - CLOUD_MONGO_PORT=10007
     depends_on:
       - mongo_root
-
 
 volumes:
   mongodb_data:

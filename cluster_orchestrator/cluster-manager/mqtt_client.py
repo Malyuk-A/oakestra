@@ -98,10 +98,6 @@ def mqtt_publish_edge_deploy(worker_id, job, instance_number):
     data["instance_number"] = int(instance_number)
     job_id = str(job.get("_id"))  # serialize ObjectId to string
     job.__setitem__("_id", job_id)
-
-    print("J#" * 15)
-    print("topic:", topic)
-    print("j-" * 15)
     mqtt.publish(topic, json.dumps(data))  # MQTT cannot send JSON, dump it to String here
 
 

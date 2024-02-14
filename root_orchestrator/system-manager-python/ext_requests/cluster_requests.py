@@ -40,9 +40,6 @@ def cluster_request_to_deploy(cluster_id, job_id, instance_number):
         )
         job["_id"] = str(job["_id"])
         resp = requests.post(cluster_addr, json=job)
-        print("X#" * 15)
-        print("cluster_addr", cluster_addr)
-        print("x-" * 15)
         print(resp)
     except requests.exceptions.RequestException:
         print("Calling Cluster Orchestrator /api/deploy not successful.")

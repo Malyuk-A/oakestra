@@ -13,6 +13,7 @@ from ext_requests.apps_db import (
     mongo_update_job,
 )
 from ext_requests.net_plugin_requests import net_inform_service_deploy, net_inform_service_undeploy
+from federated_learning.fl_management import check_for_fl_services
 from services.instance_management import request_scale_down_instance
 from sla.versioned_sla_parser import parse_sla_json
 
@@ -25,7 +26,9 @@ def create_services_of_app(username, sla, force=False):
     application = mongo_find_app_by_id(app_id, username)
     if application is None:
         return {"message": "application not found"}, 404
-    for microservice in data.get("applications")[0].get("microservices"):
+
+    microservices = data.get("applications")[0].get("microservices")
+    for microservice in microservices:
         if not valid_service(microservice):
             return {"message": "invalid service name or namespace"}, 403
         # Insert job into database
@@ -41,6 +44,7 @@ def create_services_of_app(username, sla, force=False):
             delete_service(username, str(last_service_id))
             return {"message": "failed to deploy service"}, 500
         # TODO: check if service deployed already etc. force=True must force the insertion anyway
+    check_for_fl_services(microservices)
     return {"job_id": str(last_service_id)}, 200
 
 
