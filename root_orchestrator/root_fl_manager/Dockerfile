@@ -10,4 +10,4 @@ ADD . /
 ENV FL_ROOT_MANAGER_PORT=5073
 EXPOSE 5073
 
-CMD ["python", "fl_root_manager.py"]
+CMD ["python", "root_fl_manager.py"]

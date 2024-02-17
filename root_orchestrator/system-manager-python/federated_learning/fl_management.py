@@ -1,17 +1,13 @@
+import os
 import pathlib
 from typing import Dict, List
 
-# from python_on_whales import DockerClient, docker
 from python_on_whales import DockerClient
 
 ROOT_FL_MANAGER_CONTAINER_NAME = "root_fl_manager"
-
-# ROOT_FL_MANAGER_DOCKER_COMPOSE_LINK_PATH = pathlib.Path(
-#     "federated_learning/fl_root_manager_docker_compose_link.yml"
-# )
-ROOT_FL_MANAGER_DOCKER_COMPOSE_LINK_PATH = pathlib.Path("federated_learning/docker-compose.yml")
-
-docker_client = DockerClient(compose_files=[ROOT_FL_MANAGER_DOCKER_COMPOSE_LINK_PATH])
+ROOT_FL_MANAGER_PATH = pathlib.Path("root_fl_manager")
+ROOT_FL_MANAGER_DOCKER_COMPOSE_PATH = ROOT_FL_MANAGER_PATH / "docker-compose.yml"
+docker_client = DockerClient(compose_files=[ROOT_FL_MANAGER_DOCKER_COMPOSE_PATH])
 
 
 def is_fl_root_mananger_running() -> bool:
@@ -30,7 +26,16 @@ def is_fl_root_mananger_running() -> bool:
 def start_fl_root_manager() -> None:
     print("A" * 15)
     print(docker_client.compose.is_installed())
-    docker_client.compose.up()
+
+    os.chdir(ROOT_FL_MANAGER_PATH)
+
+    # docker_client.compose.up(["root_fl_manager", "root_fl_image_registry"])
+    docker_client.compose.up(
+        services=["root_fl_manager", "root_fl_image_registry"],
+        detach=True,
+        build=True,
+        force_recreate=True,
+    )
     print("B" * 15)
 
     # try:
