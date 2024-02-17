@@ -2,9 +2,9 @@ import flask
 import flask_openapi3
 
 binaries_blp = flask_openapi3.APIBlueprint(
-    "binairies",
+    "binaries",
     __name__,
-    url_prefix="/binaries",
+    url_prefix="/api/data/binaries",
 )
 
 

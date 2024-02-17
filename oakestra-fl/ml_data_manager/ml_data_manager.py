@@ -1,7 +1,7 @@
 import os
 
 import flask_openapi3
-from ml_data_manager.blueprints import blueprints
+from blueprints import blueprints
 
 ML_DATA_MANAGER_PORT = os.environ.get("ML_DATA_MANAGER_PORT")
 
