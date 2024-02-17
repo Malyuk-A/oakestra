@@ -1,8 +1,7 @@
 import os
 
 import flask_openapi3
-
-import ml_data_manager.
+from ml_data_manager.blueprints import blueprints
 
 ML_DATA_MANAGER_PORT = os.environ.get("ML_DATA_MANAGER_PORT")
 
@@ -18,7 +17,6 @@ def health():
 def main():
     for blp in blueprints:
         app.register_api(blp)
-
     app.run(host="0.0.0.0", port=ML_DATA_MANAGER_PORT, debug=True)
 
 
