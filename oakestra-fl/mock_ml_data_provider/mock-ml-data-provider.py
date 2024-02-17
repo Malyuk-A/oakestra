@@ -35,7 +35,8 @@ def send_data_to_colocated_data_manager(dataset_partition):
     encoded_data = base64.b64encode(buffer)
 
     url = "http://localhost:11027/api/data/binaries"
-    response = requests.post(url, data=encoded_data)
+    headers = {"Content-Type": "application/octet-stream"}
+    response = requests.post(url, data=encoded_data, headers=headers)
     print(response)
 
 
