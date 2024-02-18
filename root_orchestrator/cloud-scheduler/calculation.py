@@ -1,13 +1,9 @@
-from federated_learning import handle_fl_job_request_preperations
 from resource_management import cluster_operations
 
 
 def calculate(job_id, job):
     print("calculating...")
     constraints = job.get("constraints")
-
-    if job.get("image") and job.get("image").startswith("https://github.com/"):
-        handle_fl_job_request_preperations(job)
 
     if constraints is not None:
         return constraint_based_scheduling(job, constraints)

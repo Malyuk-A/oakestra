@@ -7,7 +7,7 @@ RUN pip install -r requirements.txt
 
 ADD . /
 
-ENV FL_ROOT_MANAGER_PORT=5073
-EXPOSE 5073
+ENV FL_ROOT_MANAGER_PORT=5072
+EXPOSE $FL_ROOT_MANAGER_PORT
 
 CMD ["python", "root_fl_manager.py"]

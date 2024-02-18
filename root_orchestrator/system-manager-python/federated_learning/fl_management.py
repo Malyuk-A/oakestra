@@ -1,65 +1,21 @@
 import os
-import pathlib
 from typing import Dict, List
 
-from python_on_whales import DockerClient
+import requests
 
-ROOT_FL_MANAGER_CONTAINER_NAME = "root_fl_manager"
-ROOT_FL_MANAGER_PATH = pathlib.Path("root_fl_manager")
-ROOT_FL_MANAGER_DOCKER_COMPOSE_PATH = ROOT_FL_MANAGER_PATH / "docker-compose.yml"
-docker_client = DockerClient(compose_files=[ROOT_FL_MANAGER_DOCKER_COMPOSE_PATH])
+ROOT_FL_MANAGER_PORT = 5072
+ROOT_FL_MANAGER_ADDR = f"http://{os.environ.get('SYSTEM_MANAGER_URL')}:{ROOT_FL_MANAGER_PORT}"
 
 
-def is_fl_root_mananger_running() -> bool:
-    running_containers = docker_client.ps()
-    for container in running_containers:
-        print("container name: ", container.name)
-
-        if container.name and container.name == ROOT_FL_MANAGER_CONTAINER_NAME:
-            root_fl_manager_container = running_containers[ROOT_FL_MANAGER_CONTAINER_NAME]
-            root_fl_manager_container_state = root_fl_manager_container.attrs["State"]
-            root_fl_manager_container_status = root_fl_manager_container_state["Status"]
-            return root_fl_manager_container_status == "RUNNING"
-    return False
-
-
-def start_fl_root_manager() -> None:
-    print("A" * 15)
-    print(docker_client.compose.is_installed())
-
-    os.chdir(ROOT_FL_MANAGER_PATH)
-
-    # docker_client.compose.up(["root_fl_manager", "root_fl_image_registry"])
-    docker_client.compose.up(
-        services=["root_fl_manager", "root_fl_image_registry"],
-        detach=True,
-        build=True,
-        force_recreate=True,
-    )
-    print("B" * 15)
-
-    # try:
-    #     subprocess.check_call(
-    #         shlex.split(f"docker-compose -f {ROOT_FL_MANAGER_DOCKER_COMPOSE_LINK_PATH} up")
-    #     )
-    # except subprocess.CalledProcessError as e:
-    #     print(f"An error occurred while trying to start Docker Compose: {e}")
-    # else:
-    #     print("Docker Compose started successfully.")
-
-    # print("C" * 15)
+def delegate_fl_service_request(job: Dict) -> None:
+    API_ENDPOINT = f"/api/fl/{job['applicationID']}/instance"
+    try:
+        requests.post(SYSTEM_MANAGER_ADDR + API_ENDPOINT)
+    except requests.exceptions.RequestException:
+        print(f"Calling System Manager '{API_ENDPOINT}' not successful.")
 
 
 def check_for_fl_services(microservices: List[Dict]):
-    already_checked_fl_root_manager_running = False
     for service in microservices:
-        if (
-            service.get("virtualization") == "docker"
-            and service.get("code")
-            and service.get("code").startswith("https://github.com/")
-        ):
-            if not already_checked_fl_root_manager_running:
-
-                if not is_fl_root_mananger_running():
-                    start_fl_root_manager()
-                already_checked_fl_root_manager_running = True
+        if service.get("virtualization") == "ml_repo" and service.get("code"):
+            delegate_fl_service_request(service)

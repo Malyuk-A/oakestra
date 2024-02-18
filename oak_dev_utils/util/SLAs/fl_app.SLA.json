@@ -12,7 +12,7 @@
                     "microserviceID": "",
                     "microservice_name": "fl testing",
                     "microservice_namespace": "fl",
-                    "virtualization": "container",
+                    "virtualization": "ml-repo",
                     "memory": 2000,
                     "vcpus": 2,
                     "vgpus": 0,
