@@ -34,9 +34,9 @@ def send_data_to_colocated_data_manager(dataset_partition):
         buffer = sink.getvalue()
     encoded_data = base64.b64encode(buffer)
 
-    url = "http://localhost:11027/api/data/binaries"
+    url = "https://localhost:11027/api/data/binaries"
     headers = {"Content-Type": "application/octet-stream"}
-    response = requests.post(url, data=encoded_data, headers=headers)
+    response = requests.post(url, data=encoded_data, headers=headers, verify=False)
     print(response)
 
 

@@ -2,6 +2,7 @@ import os
 
 import flask_openapi3
 from blueprints import blueprints
+from utils.certificate_generator import CERT_PATH, KEY_PATH, handle_certificate
 
 ML_DATA_MANAGER_PORT = os.environ.get("ML_DATA_MANAGER_PORT")
 
@@ -17,7 +18,14 @@ def health():
 def main():
     for blp in blueprints:
         app.register_api(blp)
-    app.run(host="0.0.0.0", port=ML_DATA_MANAGER_PORT, debug=True)
+    handle_certificate()
+
+    app.run(
+        host="0.0.0.0",
+        port=ML_DATA_MANAGER_PORT,
+        debug=True,
+        ssl_context=(str(CERT_PATH), str(KEY_PATH)),
+    )
 
 
 if __name__ == "__main__":
