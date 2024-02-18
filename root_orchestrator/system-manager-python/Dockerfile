@@ -2,15 +2,15 @@ FROM python:3.10-slim-buster
 LABEL org.opencontainers.image.source https://github.com/oakestra/oakestra
 
 # The greenlet pip package requires gcc & g++ to work properly.
-RUN apt-get update && apt-get install -y --no-install-recommends gcc g++ curl
+RUN apt-get update && apt-get install -y --no-install-recommends gcc g++
 
-ADD system-manager-python/requirements.txt .
+ADD requirements.txt /
 
 RUN pip install -r requirements.txt --no-cache-dir && rm /requirements.txt
 
-ADD system-manager-python .
+ADD . /
 
-# # TRUE for verbose logging
+# TRUE for verbose logging
 ENV FLASK_DEBUG=TRUE
 
 ENV CLOUD_MONGO_URL=localhost

@@ -5,9 +5,7 @@ services:
   # System Manager REST API of Root Orchestrator
   system_manager:
     image: system_manager
-    build: 
-      context: .
-      dockerfile: system-manager-python/Dockerfile
+    build: system-manager-python/
     hostname: system_manager
     container_name: system_manager
     expose:
@@ -119,8 +117,6 @@ services:
     depends_on:
       - redis
       - resource_abstractor
-    volumes: #dev
-      - /home/alex/oakestra/root_orchestrator/cloud-scheduler:/app
 
   resource_abstractor:
     image: resource_abstractor

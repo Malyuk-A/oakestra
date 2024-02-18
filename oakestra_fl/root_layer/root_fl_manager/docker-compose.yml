@@ -10,7 +10,7 @@ services:
     expose:
       - "5072"
     ports:
-      - "5072:5000"
+      - "5072:5072"
     networks:
       - root_orchestrator_default
   
