@@ -11,6 +11,8 @@ services:
       - "5072"
     ports:
       - "5072:5000"
+    networks:
+      - root_orchestrator_default
   
   root_fl_image_registry:
     image: registry:2.8.3
@@ -20,3 +22,13 @@ services:
     ports:
       - "5073:5000"
     depends_on: [root_fl_manager]
+    networks:
+      - root_orchestrator_default
+
+# To be able for the root-orchestrator (RO) compose services to reach the root fl services
+# an easy solution is to place the fl root services into the same docker network.
+# Otherwise the fl root services cannot be reached by the RO services.
+# https://stackoverflow.com/a/42114724
+networks:
+  root_orchestrator_default:
+    external: true

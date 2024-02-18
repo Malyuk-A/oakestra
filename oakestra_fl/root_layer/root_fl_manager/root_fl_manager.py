@@ -11,6 +11,10 @@ app = flask_openapi3.OpenAPI(__name__, info=info)
 
 @app.route("/", methods=["GET"])
 def health():
+    app.logger.error("error")
+    app.logger.warning("warning")
+    app.logger.info("info")
+    app.logger.debug("debug")
     return {"message": "Ok"}, 200
 
 

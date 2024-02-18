@@ -1,7 +1,7 @@
 import argparse
 from typing import Any
 
-from oak_dev_utils.oak_args_parse.docker.restart import prepare_docker_restart_argparser
+from oak_dev_utils.oak_args_parse.docker.rebuild import prepare_docker_rebuild_argparser
 from oak_dev_utils.oak_args_parse.types import Subparsers
 
 
@@ -22,4 +22,4 @@ def prepare_docker_argparsers(subparsers: Subparsers) -> None:
         dest="services commands",
     )
 
-    prepare_docker_restart_argparser(docker_subparsers)
+    prepare_docker_rebuild_argparser(docker_subparsers)

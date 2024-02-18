@@ -24,8 +24,7 @@ def prepare_applications_create_argparser(applications_subparsers: Subparsers) -
         formatter_class=argparse.RawTextHelpFormatter,
     )
     applications_create_parser.add_argument(
-        "-s",
-        "--sla",
+        "sla",
         help="creates an application based on a KnowsSLA (if is has its own enum)",
         type=KnownSLA,
         choices=KnownSLA,
