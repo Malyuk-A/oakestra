@@ -1,5 +1,6 @@
 import flask
 import flask_openapi3
+from root_fl_manager import app
 
 fl_services_blp = flask_openapi3.APIBlueprint(
     "fl-services",
@@ -10,17 +11,12 @@ fl_services_blp = flask_openapi3.APIBlueprint(
 
 @fl_services_blp.post("/")
 def post_fl_service():
-    from root_fl_manager import app
-
-    app.logger.error("AAAAAAAAAAA")
-    app.logger.warning("BBBBBBBBBB")
-    app.logger.info("CCCCCCCCCCC")
-    app.logger.debug("DDDDDDDDDDDD")
-
     data = flask.request.json
+    repo_url = data["code"]
 
-    app.logger.error("chaooooooooooo")
+    if not repo_url.srtartswith("https://github.com/"):
+        return {"message": "Please provide the code in the form of a valid GitHub repository."}, 400
 
-    print(data)
-    app.logger.debug(f"data = {data}")
+    repo_name = repo_url.split("://")[-1]
+
     return {"message": "FL service has been properly prepared"}, 200
