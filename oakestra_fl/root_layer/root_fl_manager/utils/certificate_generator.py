@@ -7,8 +7,8 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.x509.oid import NameOID
 
 SSL_PATH = pathlib.Path("/etc/ssl")
-KEY_PATH = SSL_PATH / "oak_key.pem"
-CERT_PATH = SSL_PATH / "oak_cert.pem"
+KEY_PATH = SSL_PATH / "key.pem"
+CERT_PATH = SSL_PATH / "cert.pem"
 
 
 def generate_key():

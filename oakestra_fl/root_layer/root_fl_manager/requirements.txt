@@ -2,3 +2,4 @@ flask ~= 3.0.2
 flask-openapi3 ~= 3.0.2
 requests ~=2.28.1
 docker ~= 7.0.0
+cryptography ~= 42.0.3

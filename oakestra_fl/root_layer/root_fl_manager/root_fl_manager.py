@@ -2,6 +2,7 @@ import os
 
 import blueprints as blps
 import flask_openapi3
+from utils.certificate_generator import handle_certificate
 
 ROOT_FL_MANAGER_PORT = os.environ.get("ROOT_FL_MANAGER_PORT")
 
@@ -15,6 +16,8 @@ def health():
 
 
 def main():
+    handle_certificate()
+
     for blp in blps.blueprints:
         app.register_api(blp)
 

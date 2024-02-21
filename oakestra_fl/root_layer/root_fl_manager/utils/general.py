@@ -6,11 +6,10 @@ import socket
 import docker as docker_sdk
 
 ROOT_FL_IMAGE_REGISTRY_DNS_NAME = "root_fl_image_registry"
-ROOT_FL_IMAGE_REGISTRY_INTERNAL_PORT = os.environ.get("ROOT_FL_IMAGE_REGISTRY_INTERNAL_PORT")
-ROOT_FL_IMAGE_REGISTRY_EXTERNAL_PORT = os.environ.get("ROOT_FL_IMAGE_REGISTRY_EXTERNAL_PORT")
+ROOT_FL_IMAGE_REGISTRY_PORT = os.environ.get("ROOT_FL_IMAGE_REGISTRY_PORT")
 
 docker = docker_sdk.from_env()
 
 
-def get_ip_address_from_dns_name() -> str:
+def get_host_ip_address() -> str:
     return socket.gethostbyname(ROOT_FL_IMAGE_REGISTRY_DNS_NAME)
