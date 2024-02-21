@@ -1,5 +1,5 @@
 from image_registry.auxiliary import (
-    EXTERNAL_ROOT_FL_IMAGE_REGISTRY_NAME,
+    FULL_ROOT_FL_IMAGE_REGISTRY_NAME,
     check_registry_reachable,
     get_current_registry_images,
 )
@@ -20,7 +20,7 @@ def push_image_to_root_registry():
 
     # new_image_name = f"{EXTERNAL_ROOT_FL_IMAGE_REGISTRY_NAME}/alpinum:latest-testalex6"
     # new_image_name = "192.168.178.44:5073/alpinum:latest-testalex7"
-    new_image_name = "localhost:5073/alpinum2:latest"
+    new_image_name = f"{FULL_ROOT_FL_IMAGE_REGISTRY_NAME}/alpinum3:latest"
     logger.debug("B" * 15)
 
     docker.images.get(pulled_image_name).tag(new_image_name)
