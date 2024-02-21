@@ -7,6 +7,12 @@ services:
     build: .
     hostname: root_fl_manager
     container_name: root_fl_manager
+    environment:
+      - ROOT_FL_MANAGER_PORT=5072
+      - ROOT_FL_IMAGE_REGISTRY_INTERNAL_PORT=5000
+      - ROOT_FL_IMAGE_REGISTRY_EXTERNAL_PORT=5073
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     expose:
       - "5072"
     ports:

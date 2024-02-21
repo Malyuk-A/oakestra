@@ -1,7 +1,7 @@
 import os
 
+import blueprints as blps
 import flask_openapi3
-from blueprints import blueprints
 
 ROOT_FL_MANAGER_PORT = os.environ.get("ROOT_FL_MANAGER_PORT")
 
@@ -15,7 +15,7 @@ def health():
 
 
 def main():
-    for blp in blueprints:
+    for blp in blps.blueprints:
         app.register_api(blp)
 
     app.run(
