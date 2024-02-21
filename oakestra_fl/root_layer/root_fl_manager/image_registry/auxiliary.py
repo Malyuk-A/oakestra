@@ -14,7 +14,7 @@ FULL_ROOT_FL_IMAGE_REGISTRY_NAME = f"{ROOT_FL_IMAGE_REGISTRY_NAME}:{ROOT_FL_IMAG
 ROOT_FL_IMAGE_REGISTRY_URL = f"https://{INTERNAL_ROOT_FL_IMAGE_REGISTRY_NAME}"
 
 
-def check_registry_reachable() -> bool:
+def check_registry_reachable(repo_name: str) -> bool:
     try:
         response = requests.get(ROOT_FL_IMAGE_REGISTRY_URL, verify=False)
         if response.status_code == 200:
@@ -31,3 +31,12 @@ def check_registry_reachable() -> bool:
 
 def get_current_registry_images() -> List[Any]:
     return docker.images.list(filters={"reference": ROOT_FL_IMAGE_REGISTRY_URL})
+
+
+def get_latest_commit_hash(repo_name: str) -> str:
+    core_git_api_url = f"https://api.github.com/repos/{repo_name}/commits"
+    main_git_api_url = f"{core_git_api_url}/main"
+    respone = requests.get(main_git_api_url)
+    data = respone.json()
+    # Note: Cut down the long hash to the usual short one for readability.
+    return data["sha"][:7]

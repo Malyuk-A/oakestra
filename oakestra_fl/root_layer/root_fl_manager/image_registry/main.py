@@ -1,10 +1,18 @@
+import git
 from image_registry.auxiliary import (
     FULL_ROOT_FL_IMAGE_REGISTRY_NAME,
     check_registry_reachable,
     get_current_registry_images,
+    get_latest_commit_hash,
 )
-from utils.general import docker
+from utils.general import GITHUB_PREFIX, docker
 from utils.logging import logger
+
+
+def latest_image_already_exists(repo_name: str) -> bool:
+    latest_commit_hash = get_latest_commit_hash(repo_name)
+    repo_url = GITHUB_PREFIX + repo_name
+    logger.debug("2" * 10)
 
 
 def push_image_to_root_registry():
