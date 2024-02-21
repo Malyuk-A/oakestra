@@ -1,27 +1,38 @@
-import git
+from http import HTTPStatus
+from typing import Optional, Tuple
+
 from image_registry.auxiliary import (
     FULL_ROOT_FL_IMAGE_REGISTRY_NAME,
     check_registry_reachable,
-    get_current_registry_images,
+    get_current_registry_image_repos,
+    get_current_registry_repo_image_tags,
     get_latest_commit_hash,
 )
-from utils.general import GITHUB_PREFIX, docker
+from utils.general import docker
 from utils.logging import logger
 
 
-def latest_image_already_exists(repo_name: str) -> bool:
-    latest_commit_hash = get_latest_commit_hash(repo_name)
-    repo_url = GITHUB_PREFIX + repo_name
-    logger.debug("2" * 10)
+def latest_image_already_exists(repo_name: str) -> Tuple[HTTPStatus, Optional[bool]]:
+    status, current_images_repos = get_current_registry_image_repos()
+    if status != HTTPStatus.OK:
+        return status, None
+    if repo_name not in current_images_repos:
+        return status, False
+
+    status, current_image_repo_tags = get_current_registry_repo_image_tags(repo_name)
+    if status != HTTPStatus.OK:
+        return status, None
+    status, latest_commit_hash = get_latest_commit_hash(repo_name)
+    if status != HTTPStatus.OK:
+        return status, None
+
+    return status, latest_commit_hash in current_image_repo_tags
 
 
 def push_image_to_root_registry():
-    if not check_registry_reachable():
-        return 500
-
-    logger.debug("A" * 15)
-    logger.info(get_current_registry_images())
-    logger.debug("a" * 15)
+    status = check_registry_reachable()
+    if status != HTTPStatus.OK:
+        return status
 
     pulled_image_name = "alpine:latest"
     docker.images.pull(pulled_image_name)
@@ -29,12 +40,9 @@ def push_image_to_root_registry():
     # new_image_name = f"{EXTERNAL_ROOT_FL_IMAGE_REGISTRY_NAME}/alpinum:latest-testalex6"
     # new_image_name = "192.168.178.44:5073/alpinum:latest-testalex7"
     new_image_name = f"{FULL_ROOT_FL_IMAGE_REGISTRY_NAME}/alpinum3:latest"
-    logger.debug("B" * 15)
 
     docker.images.get(pulled_image_name).tag(new_image_name)
 
     docker.images.push(new_image_name)
 
-    logger.debug("Z" * 15)
-    logger.info(get_current_registry_images())
-    logger.info("z" * 15)
+    logger.info(get_current_registry_image_repos())
