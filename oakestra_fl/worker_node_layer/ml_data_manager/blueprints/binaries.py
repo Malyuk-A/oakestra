@@ -1,5 +1,6 @@
 import pathlib
 from datetime import datetime
+from http import HTTPStatus
 
 import flask
 import flask_openapi3
@@ -18,7 +19,9 @@ binaries_blp = flask_openapi3.APIBlueprint(
 def post_binary_data():
 
     if flask.request.headers.get("Content-Type") != CONTENT_TYPE:
-        return {"error": f"Bad request, the Header Content-Type should be '{CONTENT_TYPE}'"}, 400
+        return {
+            "error": f"Bad request, the Header Content-Type should be '{CONTENT_TYPE}'"
+        }, HTTPStatus.BAD_REQUEST
 
     # Get the binary data from the request
     binary_data = flask.request.data
@@ -28,4 +31,4 @@ def post_binary_data():
     with open(f"{ML_DATA_VOLUME / current_time}.bin", "wb") as file:
         file.write(binary_data)
 
-    return {"message": "Data posted successfully"}, 200
+    return {"message": "Data posted successfully"}, HTTPStatus.OK

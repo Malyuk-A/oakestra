@@ -28,12 +28,13 @@ def create_services_of_app(username, sla, force=False):
         return {"message": "application not found"}, 404
 
     microservices = data.get("applications")[0].get("microservices")
-    for microservice in microservices:
+    for i, microservice in enumerate(microservices):
         if not valid_service(microservice):
             return {"message": "invalid service name or namespace"}, 403
         # Insert job into database
         service = generate_db_structure(application, microservice)
         last_service_id = mongo_insert_job(service)
+        microservices[i]["microserviceID"] = last_service_id
         # Insert job into app's services list
         mongo_set_microservice_id(last_service_id)
         add_service_to_app(app_id, last_service_id, username)
@@ -81,11 +82,14 @@ def user_services(appid, username):
     return mongo_get_jobs_of_application(appid), 200
 
 
-def get_service(serviceid, username):
-    apps = mongo_get_applications_of_user(username)
-    for application in apps:
-        if serviceid in application["microservices"]:
-            return mongo_find_job_by_id(serviceid)
+def get_service(serviceid, username=None):
+    if username is None:
+        return mongo_find_job_by_id(serviceid)
+    else:
+        apps = mongo_get_applications_of_user(username)
+        for application in apps:
+            if serviceid in application["microservices"]:
+                return mongo_find_job_by_id(serviceid)
 
 
 def get_all_services():

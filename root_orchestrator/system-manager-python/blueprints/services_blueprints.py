@@ -36,14 +36,14 @@ class ServiceController(MethodView):
         content_type="application/json",
     )
     @jwt_auth_required()
-    def get(self, serviceid):
-        """Get service for specific ID
+    def get(self, serviceid, only_get_services_of_current_user=True):
+        """Get service for specific ID"""
 
-        Requires user to own the service
-        ---
-        """
-        username = get_jwt_auth_identity()
-        job = service_management.get_service(serviceid, username)
+        if only_get_services_of_current_user:
+            username = get_jwt_auth_identity()
+            job = service_management.get_service(serviceid, username)
+        else:
+            job = service_management.get_service(serviceid)
         if job is not None:
             return json_util.dumps(job)
         else:
@@ -107,6 +107,7 @@ class ServiceControllerPost(MethodView):
         if data:
             try:
                 username = get_jwt_auth_identity()
+                print("1#" * 15)
                 result, status = service_management.create_services_of_app(username, data)
                 if status != 200:
                     abort(status, result)

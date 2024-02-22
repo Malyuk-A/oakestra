@@ -11,7 +11,6 @@ ROOT_FL_MANAGER_ADDR = f"http://{ROOT_FL_MANAGER_URL}:{ROOT_FL_MANAGER_PORT}"
 def delegate_fl_service_request(service: Dict) -> None:
     api_endpoint = "/api/fl-services/"
     url = ROOT_FL_MANAGER_ADDR + api_endpoint
-    print("A#" * 15)
     try:
         requests.post(url, json=service)
     except requests.exceptions.RequestException:

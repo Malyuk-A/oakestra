@@ -1,4 +1,5 @@
 import os
+from http import HTTPStatus
 
 import flask_openapi3
 from blueprints import blueprints
@@ -12,7 +13,7 @@ app = flask_openapi3.OpenAPI(__name__, info=info)
 
 @app.route("/", methods=["GET"])
 def health():
-    return {"message": "Ok"}, 200
+    return HTTPStatus.OK
 
 
 def main():
