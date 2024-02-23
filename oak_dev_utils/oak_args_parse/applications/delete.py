@@ -2,6 +2,7 @@ import argparse
 from typing import Any
 
 from oak_dev_utils.applications.delete import delete_all_applications, delete_application
+from oak_dev_utils.login import login_and_set_token
 from oak_dev_utils.oak_args_parse.types import Subparsers
 
 APP_ID_HELP_TEXT = """
@@ -13,6 +14,7 @@ DELETION_HELP_TEXT = "deletes one or all applications" + APP_ID_HELP_TEXT
 
 def prepare_applications_deletion_argparser(applications_subparsers: Subparsers) -> None:
     def aux_delete_appliacations(args: Any):
+        login_and_set_token()
         if args.app_id == "all":
             delete_all_applications()
         else:

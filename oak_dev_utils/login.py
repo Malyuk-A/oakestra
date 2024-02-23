@@ -1,19 +1,24 @@
 import requests
 
-from oak_dev_utils.util.api import check_api_response_quietly, create_api_query
+import oak_dev_utils.util.api as oak_api
 
 login_token = ""
 
 
 def login_and_set_token() -> str:
+    current_token = get_login_token()
+    if current_token != "":
+        return current_token
+
     data = {"username": "Admin", "password": "Admin"}
     headers = {"accept": "application/json", "Content-Type": "application/json"}
-    url, headers, data = create_api_query("/api/auth/login", headers, data)
+    url, headers, data = oak_api.create_api_query("/api/auth/login", headers, data)
     response = requests.post(url, headers=headers, json=data)
-    check_api_response_quietly(response, what_should_happen="Login")
+    oak_api.check_api_response_quietly(response, what_should_happen="Login")
 
     global login_token
     login_token = response.json()["token"]
+    return login_token
 
 
 def get_login_token() -> str:

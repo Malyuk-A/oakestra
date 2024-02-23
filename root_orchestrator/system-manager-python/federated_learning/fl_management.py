@@ -18,6 +18,7 @@ def delegate_fl_service_request(service: Dict) -> None:
 
 
 def check_for_fl_services(microservices: List[Dict]):
+    print("RE+" * 10)
     for service in microservices:
         if service.get("virtualization") == "ml-repo" and service.get("code"):
             delegate_fl_service_request(service)

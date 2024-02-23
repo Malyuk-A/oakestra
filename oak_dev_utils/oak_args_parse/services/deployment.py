@@ -1,6 +1,7 @@
 import argparse
 from typing import Any
 
+from oak_dev_utils.login import login_and_set_token
 from oak_dev_utils.oak_args_parse.types import Subparsers
 from oak_dev_utils.services.deployment import (
     deploy_new_instance,
@@ -10,6 +11,7 @@ from oak_dev_utils.services.deployment import (
 
 
 def aux_deploy_instances(args: Any):
+    login_and_set_token()
     if args.instancenumber:
         if args.instancenumber == "all":
             undeploy_all_instances_of_service(args.service_id)

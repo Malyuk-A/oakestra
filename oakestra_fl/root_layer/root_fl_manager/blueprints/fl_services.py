@@ -19,9 +19,9 @@ def post_fl_service():
     data = flask.request.json
     repo_url = data["code"]
 
-    # logger.debug("A#" * 10)
-    # logger.debug(data)
-    # logger.debug("a-" * 10)
+    logger.debug("A#" * 10)
+    logger.debug(data)
+    logger.debug("a-" * 10)
     update_service_image(data, "alextesting")
     exit(0)
 

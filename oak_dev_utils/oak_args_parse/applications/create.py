@@ -2,11 +2,13 @@ import argparse
 from typing import Any
 
 from oak_dev_utils.applications.create import create_app_via_sla
+from oak_dev_utils.login import login_and_set_token
 from oak_dev_utils.oak_args_parse.types import Subparsers
 from oak_dev_utils.util.SLAs.enum import KnownSLA
 
 
 def aux_create_application(args: Any) -> None:
+    login_and_set_token()
     if args.sla:
         create_app_via_sla(args.sla)
     else:
