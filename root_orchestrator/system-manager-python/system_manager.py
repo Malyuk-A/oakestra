@@ -5,6 +5,7 @@ from datetime import timedelta
 from pathlib import Path
 from secrets import token_hex
 
+import mqtt.main as root_mqtt
 from blueprints import blueprints
 from bson import json_util
 from ext_requests.cluster_db import mongo_upsert_cluster
@@ -26,6 +27,13 @@ UPLOAD_FOLDER = "files"
 ALLOWED_EXTENSIONS = {"txt", "json", "yml"}
 
 app = Flask(__name__)
+
+app.logger.info("T#" * 10)
+
+
+root_mqtt.handle_mqtt()
+app.logger.info("Zz#" * 10)
+
 
 app.config["OPENAPI_VERSION"] = "3.0.2"
 app.config["API_TITLE"] = "Oakestra root api"

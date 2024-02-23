@@ -14,7 +14,6 @@ DELETION_HELP_TEXT = "deletes one or all applications" + APP_ID_HELP_TEXT
 
 def prepare_applications_deletion_argparser(applications_subparsers: Subparsers) -> None:
     def aux_delete_appliacations(args: Any):
-        login_and_set_token()
         if args.app_id == "all":
             delete_all_applications()
         else:

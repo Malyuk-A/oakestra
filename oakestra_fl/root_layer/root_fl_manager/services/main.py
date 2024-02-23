@@ -1,19 +1,25 @@
 from typing import Dict
 
 import requests
-from utils.general import SYSTEM_MANAGER_URL
+from utils.api import create_system_manager_api_query
 from utils.logging import logger
 
 
 def update_service_image(service: Dict, existing_image_name: str) -> None:
     service["image"] = existing_image_name
     service_id = service["microserviceID"]
-    url = f"{SYSTEM_MANAGER_URL}/api/services/{service_id}"
     logger.debug("E#" * 10)
-    logger.debug(url)
-    logger.debug("e-" * 10)
-    response = requests.put(url, json=service)
+
+    url, headers, _ = create_system_manager_api_query(f"/api/services/{service_id}")
     logger.debug("F#" * 10)
+
+    # response = requests.put(url, json=service)
+    logger.debug(url)
+    logger.debug(headers)
+    logger.debug("G#" * 10)
+    response = requests.get(url, headers=headers)
+
+    logger.debug("H#" * 10)
     logger.debug(response)
     logger.debug(response.json())
-    logger.debug("f-" * 10)
+    logger.debug("h-" * 10)

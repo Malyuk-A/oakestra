@@ -6,10 +6,6 @@ login_token = ""
 
 
 def login_and_set_token() -> str:
-    current_token = get_login_token()
-    if current_token != "":
-        return current_token
-
     data = {"username": "Admin", "password": "Admin"}
     headers = {"accept": "application/json", "Content-Type": "application/json"}
     url, headers, data = oak_api.create_api_query("/api/auth/login", headers, data)
@@ -22,4 +18,6 @@ def login_and_set_token() -> str:
 
 
 def get_login_token() -> str:
+    if login_token == "":
+        return login_and_set_token()
     return login_token

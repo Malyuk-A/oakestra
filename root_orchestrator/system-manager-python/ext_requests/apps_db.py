@@ -8,8 +8,7 @@ from bson import ObjectId
 
 
 def mongo_insert_job(microservice):
-    print("C1A1# " * 10)
-    # db.app.logger.info("MONGODB - insert job...")
+    db.app.logger.info("MONGODB - insert job...")
     # jobname and details generation
     job_name = (
         microservice["app_name"]
@@ -20,23 +19,15 @@ def mongo_insert_job(microservice):
         + "."
         + microservice["microservice_namespace"]
     )
-    print("C1A2# " * 10)
     microservice["job_name"] = job_name
     job_content = {
         "job_name": job_name,
         **microservice,  # The content of the input file
     }
-    print("C1A3# " * 10)
     # job insertion
     new_job = db.mongo_services.find_one_and_update(
         {"job_name": job_name}, {"$set": job_content}, upsert=True, return_document=True
     )
-    print("C1A4# " * 10)
-    print("AAAAAAAAAAAAAAA")
-    # db.app.logger.info("MONGODB - job {} inserted".format(str(new_job.get("_id"))))
-    print("BBBBBBBBBB")
-    print("C1A5# " * 10)
-    print("CCCCCCCCCC")
     return str(new_job.get("_id"))
 
 
@@ -195,18 +186,14 @@ def mongo_find_cluster_of_job(job_id, instance_num):
 
 
 def mongo_add_application(application):
-    print("re0#" * 10)
     db.app.logger.info("MONGODB - insert application...")
     application.get("userId")
     new_job = db.mongo_applications.insert_one(application)
     inserted_id = new_job.inserted_id
-    print("re1#" * 10)
     db.app.logger.info("MONGODB - app {} inserted".format(str(inserted_id)))
-    print("re2#" * 10)
     db.mongo_applications.find_one_and_update(
         {"_id": inserted_id}, {"$set": {"applicationID": str(inserted_id)}}
     )
-    print("re3#" * 10)
     return str(inserted_id)
 
 

@@ -11,7 +11,6 @@ from oak_dev_utils.services.deployment import (
 
 
 def aux_deploy_instances(args: Any):
-    login_and_set_token()
     if args.instancenumber:
         if args.instancenumber == "all":
             undeploy_all_instances_of_service(args.service_id)

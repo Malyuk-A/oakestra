@@ -19,7 +19,6 @@ from sla.versioned_sla_parser import parse_sla_json
 
 
 def create_services_of_app(username, sla, force=False):
-    print("AIAIA#" * 10)
     data = parse_sla_json(sla)
     logging.log(logging.INFO, sla)
     app_id = data.get("applications")[0]["applicationID"]
@@ -28,37 +27,29 @@ def create_services_of_app(username, sla, force=False):
     if application is None:
         return {"message": "application not found"}, 404
 
-    print("BI#" * 10)
-
     microservices = data.get("applications")[0].get("microservices")
     for i, microservice in enumerate(microservices):
-        print("CI#" * 10)
         if not valid_service(microservice):
             return {"message": "invalid service name or namespace"}, 403
         # Insert job into database
-        print("C1#" * 10)
         service = generate_db_structure(application, microservice)
-        print("C1A#" * 10)
         last_service_id = mongo_insert_job(service)
-        print("C2#" * 10)
         microservices[i]["microserviceID"] = last_service_id
         # Insert job into app's services list
         mongo_set_microservice_id(last_service_id)
-        print("C3#" * 10)
         add_service_to_app(app_id, last_service_id, username)
-        print("C4#" * 10)
+
         # Inform network plugin about the new service
-        print("DI#" * 10)
         try:
             net_inform_service_deploy(service, str(last_service_id))
-            print("FI#" * 10)
         except Exception:
             delete_service(username, str(last_service_id))
             return {"message": "failed to deploy service"}, 500
         # TODO: check if service deployed already etc. force=True must force the insertion anyway
-        print("GI#" * 10)
-    print("ZIZIZI#" * 10)
-    check_for_fl_services(microservices)
+    # check_for_fl_services(microservices)
+    from mqtt.main import mqtt_client
+
+    mqtt_client.publish("test", f"New Application '{app_id}' created")
     return {"job_id": str(last_service_id)}, 200
 
 
@@ -88,17 +79,6 @@ def update_service(sla, serviceid, username=None):
             if serviceid in application["microservices"]:
                 return mongo_update_job(serviceid, sla), 200
     return {"message": "service not found"}, 404
-
-
-# def patch_service(sla, serviceid, username=None):
-#     # TODO Check fields and redeploy service
-#     current_service = mongo_get_service(serviceid)
-#     if not current_service:
-#         return {"message": "service not found"}, 404
-
-#     # Merge the partial update with the current service object
-#     updated_service = {**current_service, **partial_sla}
-#     return update_service(sla, serviceid, username=None)
 
 
 def user_services(appid, username):

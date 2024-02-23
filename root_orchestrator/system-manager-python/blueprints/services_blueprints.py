@@ -36,14 +36,18 @@ class ServiceController(MethodView):
         content_type="application/json",
     )
     @jwt_auth_required()
-    def get(self, serviceid, only_get_services_of_current_user=True):
+    def get(self, serviceid):
+        # def get(self, serviceid, only_get_services_of_current_user=True):
         """Get service for specific ID"""
 
-        if only_get_services_of_current_user:
-            username = get_jwt_auth_identity()
-            job = service_management.get_service(serviceid, username)
-        else:
-            job = service_management.get_service(serviceid)
+        # if only_get_services_of_current_user:
+        #     username = get_jwt_auth_identity()
+        #     job = service_management.get_service(serviceid, username)
+        # else:
+        #     job = service_management.get_service(serviceid)
+        username = get_jwt_auth_identity()
+        job = service_management.get_service(serviceid, username)
+
         if job is not None:
             return json_util.dumps(job)
         else:
@@ -73,7 +77,7 @@ class ServiceController(MethodView):
     @jwt_auth_required()
     def put(self, *args, serviceid):
         """Update service with ID"""
-        print("RE#" * 10)
+        print("A#" * 10)
         try:
             username = get_jwt_auth_identity()
             job = (request.get_json()["applications"][0])["microservices"][0]
@@ -85,25 +89,6 @@ class ServiceController(MethodView):
             return {}
         except ConnectionError as e:
             abort(404, {"message": e})
-
-    # @serviceblp.arguments(
-    #     schema=sla.schema.sla_schema, location="json", validate=False, unknown=True
-    # )
-    # @serviceblp.response(200, content_type="application/json")
-    # @jwt_auth_required()
-    # def patch(self, *args, serviceid):
-    #     """Update/Patch specific properties of a service by ID"""
-    #     try:
-    #         username = get_jwt_auth_identity()
-    #         job = (request.get_json()["applications"][0])["microservices"][0]
-    #         if "_id" in job:
-    #             del job["_id"]
-    #         result, status = service_management.update_service(job, serviceid, username)
-    #         if status != 200:
-    #             abort(status, result)
-    #         return {}
-    #     except ConnectionError as e:
-    #         abort(404, {"message": e})
 
 
 @serviceblp.route("/")
@@ -123,7 +108,6 @@ class ServiceControllerPost(MethodView):
         if data:
             try:
                 username = get_jwt_auth_identity()
-                print("1#" * 15)
                 result, status = service_management.create_services_of_app(username, data)
                 if status != 200:
                     abort(status, result)

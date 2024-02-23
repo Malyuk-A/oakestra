@@ -55,7 +55,6 @@ def greedy_load_balanced_algorithm(job, active_clusters=None):
 
     if active_clusters is None:
         active_clusters = cluster_operations.get_resources(active=True)
-        print(active_clusters)
     qualified_clusters = []
 
     # memory = 0

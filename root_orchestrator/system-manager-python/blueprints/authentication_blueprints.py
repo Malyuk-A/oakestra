@@ -42,16 +42,13 @@ register_schema = {
 class UserLoginController(MethodView):
     @loginbp.arguments(schema=login_schema, location="json", validate=False, unknown=True)
     def post(self, *args, **kwargs):
-        print("A+" * 10)
         content = request.get_json()
-        print("B+" * 10)
         print(content)
         if content is None:
             abort(403, {"message": "No credentials provided"})
         resp = user_login(content)
         if resp == {}:
             abort(401, {"message": "invalid username or password"})
-        print("Z+" * 10)
         return resp
 
 

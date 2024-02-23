@@ -23,8 +23,10 @@ services:
       - CLOUD_SCHEDULER_PORT=10004
       - NET_PLUGIN_URL=root_service_manager
       - NET_PLUGIN_PORT=10099
-      - ROOT_FL_MANAGER_URL=root_fl_manager
-      - ROOT_FL_MANAGER_PORT=5072
+      - ROOT_MQTT_BROKER_PORT=9027
+      - ROOT_MQTT_BROKER_URL=root_mqtt
+      #- ROOT_FL_MANAGER_URL=root_fl_manager
+      #- ROOT_FL_MANAGER_PORT=5072
 
 
   # MongoDB in Root Orchestrator
@@ -133,6 +135,23 @@ services:
       - CLOUD_MONGO_PORT=10007
     depends_on:
       - mongo_root
+
+  root_mqtt:
+    image: eclipse-mosquitto:2.0
+    hostname: root_mqtt
+    container_name: root_mqtt
+    restart: unless-stopped
+    ports:
+      - "9027:9027"
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - /mosquitto/data
+      - /mosquitto/log
+    healthcheck:
+      test: [ "CMD-SHELL", "timeout -t 5 mosquitto_sub -t '$$SYS/#' -C 1 | grep -v Error || exit 1" ]
+      interval: 10s
+      timeout: 10s
+      retries: 6
 
 volumes:
   mongodb_data:

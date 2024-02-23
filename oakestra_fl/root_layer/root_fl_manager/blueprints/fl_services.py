@@ -16,6 +16,22 @@ fl_services_blp = flask_openapi3.APIBlueprint(
 
 @fl_services_blp.post("/")
 def post_fl_service():
+
+    @flask.after_this_request
+    def testing(response):
+        # testing(respone):
+        import time
+
+        time.sleep(5)
+        logger.debug("Z#" * 10)
+        logger.debug(response)
+        logger.debug("z-" * 10)
+        return response
+
+    logger.debug("A#" * 10)
+    # return {"message": "TESTING"}, HTTPStatus.OK
+    return {"message": "TESTING"}
+
     data = flask.request.json
     repo_url = data["code"]
 
@@ -23,7 +39,7 @@ def post_fl_service():
     logger.debug(data)
     logger.debug("a-" * 10)
     update_service_image(data, "alextesting")
-    exit(0)
+    return {"message": "TESTING"}, HTTPStatus.OK
 
     if not repo_url.startswith(GITHUB_PREFIX):
         return {
@@ -34,7 +50,9 @@ def post_fl_service():
 
     status, existing_image_name = latest_image_already_exists(repo_name)
     if status != HTTPStatus.OK:
-        return status
+        return {
+            "message": f"Failed to check latest image based on this repo name: '{repo_name}'"
+        }, status
     if existing_image_name is not None:
         update_service_image(data, existing_image_name)
         return (

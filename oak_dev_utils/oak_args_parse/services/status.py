@@ -8,7 +8,6 @@ from oak_dev_utils.services.status import display_all_current_services, disply_s
 
 
 def aux_display_current_services(args: Any) -> None:
-    login_and_set_token()
     if args.all or args.appid:
         display_all_current_services(verbose=args.verbose, app_id=args.appid)
     elif args.serviceid:

@@ -12,10 +12,9 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-	"fmt"
 )
 
-var clusterAddress = flag.String("a", "localhost", "Address of the cluster orchestrator without port ALEXTEST")
+var clusterAddress = flag.String("a", "localhost", "Address of the cluster orchestrator without port")
 var clusterPort = flag.String("p", "10000", "Port of the cluster orchestrator")
 var overlayNetwork = flag.Int("n", -1, "Port of the NetManager component, if any. This enables the overlay network across nodes")
 var UnikernelSupport = flag.Bool("u", false, "Set to enable Unikernel support")
@@ -55,8 +54,6 @@ func main() {
 		}
 	}
 
-	fmt.Println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-	
 	//binding the node MQTT client
 	mqtt.InitMqtt(handshakeResult.NodeId, *clusterAddress, handshakeResult.MqttPort)
 	//starting node status background job.

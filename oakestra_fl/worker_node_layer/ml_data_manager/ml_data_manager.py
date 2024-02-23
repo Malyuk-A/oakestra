@@ -13,7 +13,7 @@ app = flask_openapi3.OpenAPI(__name__, info=info)
 
 @app.route("/", methods=["GET"])
 def health():
-    return HTTPStatus.OK
+    return {"message": "ok"}, HTTPStatus.OK
 
 
 def main():

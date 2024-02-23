@@ -143,10 +143,6 @@ def http_node_registration():
     # TODO: check and generate tokens
     client_id = mongo_upsert_node({"ip": request.remote_addr, "node_info": data})
 
-    print("A#" * 15)
-    print("node_info:", data)
-    print("a-" * 15)
-
     response = {
         "id": str(client_id),
         "MQTT_BROKER_PORT": os.environ.get("MQTT_BROKER_PORT"),

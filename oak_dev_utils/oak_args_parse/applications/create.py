@@ -8,7 +8,6 @@ from oak_dev_utils.util.SLAs.enum import KnownSLA
 
 
 def aux_create_application(args: Any) -> None:
-    login_and_set_token()
     if args.sla:
         create_app_via_sla(args.sla)
     else:
