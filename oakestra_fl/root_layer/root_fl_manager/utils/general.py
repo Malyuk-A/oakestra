@@ -10,6 +10,10 @@ import requests
 ROOT_FL_IMAGE_REGISTRY_DNS_NAME = "root_fl_image_registry"
 ROOT_FL_IMAGE_REGISTRY_PORT = os.environ.get("ROOT_FL_IMAGE_REGISTRY_PORT")
 
+SYSTEM_MANAGER_IP = os.environ.get("SYSTEM_MANAGER_IP")
+SYSTEM_MANAGER_PORT = os.environ.get("SYSTEM_MANAGER_PORT")
+SYSTEM_MANAGER_URL = f"http://{SYSTEM_MANAGER_IP}:{SYSTEM_MANAGER_PORT}"
+
 GITHUB_PREFIX = "https://github.com/"
 
 docker = docker_sdk.from_env()

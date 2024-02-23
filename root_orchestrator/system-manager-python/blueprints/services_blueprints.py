@@ -72,22 +72,38 @@ class ServiceController(MethodView):
     @serviceblp.response(200, content_type="application/json")
     @jwt_auth_required()
     def put(self, *args, serviceid):
-        """Update service with ID
-
-        Requires user to own the service
-        ---
-        """
+        """Update service with ID"""
+        print("RE#" * 10)
         try:
             username = get_jwt_auth_identity()
             job = (request.get_json()["applications"][0])["microservices"][0]
             if "_id" in job:
                 del job["_id"]
-            result, status = service_management.update_service(username, job, serviceid)
+            result, status = service_management.update_service(job, serviceid, username)
             if status != 200:
                 abort(status, result)
             return {}
         except ConnectionError as e:
             abort(404, {"message": e})
+
+    # @serviceblp.arguments(
+    #     schema=sla.schema.sla_schema, location="json", validate=False, unknown=True
+    # )
+    # @serviceblp.response(200, content_type="application/json")
+    # @jwt_auth_required()
+    # def patch(self, *args, serviceid):
+    #     """Update/Patch specific properties of a service by ID"""
+    #     try:
+    #         username = get_jwt_auth_identity()
+    #         job = (request.get_json()["applications"][0])["microservices"][0]
+    #         if "_id" in job:
+    #             del job["_id"]
+    #         result, status = service_management.update_service(job, serviceid, username)
+    #         if status != 200:
+    #             abort(status, result)
+    #         return {}
+    #     except ConnectionError as e:
+    #         abort(404, {"message": e})
 
 
 @serviceblp.route("/")

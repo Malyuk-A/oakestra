@@ -3,6 +3,7 @@ from http import HTTPStatus
 import flask
 import flask_openapi3
 from image_registry.main import latest_image_already_exists
+from services.main import update_service_image
 from utils.general import GITHUB_PREFIX
 from utils.logging import logger
 
@@ -18,8 +19,11 @@ def post_fl_service():
     data = flask.request.json
     repo_url = data["code"]
 
-    TODO retrieve or create SLA I guess, or maybe not necessary simply call update endpoint API ?
-    #data["microserviceID"]
+    # logger.debug("A#" * 10)
+    # logger.debug(data)
+    # logger.debug("a-" * 10)
+    update_service_image(data, "alextesting")
+    exit(0)
 
     if not repo_url.startswith(GITHUB_PREFIX):
         return {
@@ -28,10 +32,11 @@ def post_fl_service():
 
     repo_name = repo_url.split(GITHUB_PREFIX)[-1]
 
-    status, image_exists = latest_image_already_exists(repo_name)
+    status, existing_image_name = latest_image_already_exists(repo_name)
     if status != HTTPStatus.OK:
         return status
-    if image_exists:
+    if existing_image_name is not None:
+        update_service_image(data, existing_image_name)
         return (
             {
                 "message": """The lastest image based on the provided repo already exists.

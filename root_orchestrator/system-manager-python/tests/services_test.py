@@ -179,7 +179,7 @@ def test_update_service():
     service_to_be_updated["new_field"] = "new"
 
     # EXEC
-    result, code = update_service("Admin", service_to_be_updated, service_to_be_updated_id)
+    result, code = update_service(service_to_be_updated, service_to_be_updated_id, "Admin")
 
     # ASSERT
     assert code == 200
@@ -211,7 +211,7 @@ def test_update_service_not_found():
     delete_service("Admin", service_to_be_updated_id)
 
     # EXEC
-    result, code = update_service("Admin", service_to_be_updated, service_to_be_updated_id)
+    result, code = update_service(service_to_be_updated, service_to_be_updated_id, "Admin")
 
     # ASSERT
     assert code == 404

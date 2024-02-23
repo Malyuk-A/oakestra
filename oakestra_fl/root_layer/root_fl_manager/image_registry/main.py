@@ -12,12 +12,10 @@ from utils.general import docker
 from utils.logging import logger
 
 
-def latest_image_already_exists(repo_name: str) -> Tuple[HTTPStatus, Optional[bool]]:
+def latest_image_already_exists(repo_name: str) -> Tuple[HTTPStatus, Optional[str]]:
     status, current_images_repos = get_current_registry_image_repos()
-    if status != HTTPStatus.OK:
+    if status != HTTPStatus.OK or repo_name not in current_images_repos:
         return status, None
-    if repo_name not in current_images_repos:
-        return status, False
 
     status, current_image_repo_tags = get_current_registry_repo_image_tags(repo_name)
     if status != HTTPStatus.OK:
@@ -26,7 +24,10 @@ def latest_image_already_exists(repo_name: str) -> Tuple[HTTPStatus, Optional[bo
     if status != HTTPStatus.OK:
         return status, None
 
-    return status, latest_commit_hash in current_image_repo_tags
+    if latest_commit_hash in current_image_repo_tags:
+        return status, f"{repo_name}:{latest_commit_hash}"
+    else:
+        return status, None
 
 
 def push_image_to_root_registry():

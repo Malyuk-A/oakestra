@@ -65,13 +65,27 @@ def delete_service(username, serviceid):
     return False
 
 
-def update_service(username, sla, serviceid):
+def update_service(sla, serviceid, username=None):
     # TODO Check fields and redeploy service
-    apps = mongo_get_applications_of_user(username)
-    for application in apps:
-        if serviceid in application["microservices"]:
-            return mongo_update_job(serviceid, sla), 200
+    if username is None:
+        return mongo_update_job(serviceid, sla), 200
+    else:
+        apps = mongo_get_applications_of_user(username)
+        for application in apps:
+            if serviceid in application["microservices"]:
+                return mongo_update_job(serviceid, sla), 200
     return {"message": "service not found"}, 404
+
+
+# def patch_service(sla, serviceid, username=None):
+#     # TODO Check fields and redeploy service
+#     current_service = mongo_get_service(serviceid)
+#     if not current_service:
+#         return {"message": "service not found"}, 404
+
+#     # Merge the partial update with the current service object
+#     updated_service = {**current_service, **partial_sla}
+#     return update_service(sla, serviceid, username=None)
 
 
 def user_services(appid, username):
