@@ -22,7 +22,7 @@ def main():
     repo_url, service_id = parse_args()
     cloned_repo = clone_repo(repo_url)
     check_cloned_repo(cloned_repo)
-    # build_repo_specific_fl_client_env_image()
+    build_repo_specific_fl_client_env_image()
 
 
 if __name__ == "__main__":
