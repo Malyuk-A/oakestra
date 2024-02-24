@@ -13,6 +13,9 @@ def on_message(client, userdata, message):
         normal_logger.info("Hello")
 
     normal_logger.info("haha")
+    normal_logger.info(f"client = '{client}'")
+    normal_logger.info(f"userdata = '{userdata}'")
+    normal_logger.info(f"message = '{message}'")
 
 
 def handle_mqtt():

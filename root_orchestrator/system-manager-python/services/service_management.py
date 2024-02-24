@@ -13,7 +13,7 @@ from ext_requests.apps_db import (
     mongo_update_job,
 )
 from ext_requests.net_plugin_requests import net_inform_service_deploy, net_inform_service_undeploy
-from mqtt.main import mqtt_client
+from mqtt.main import get_mqtt_client
 from services.instance_management import request_scale_down_instance
 from sla.versioned_sla_parser import parse_sla_json
 
@@ -42,7 +42,7 @@ def create_services_of_app(username, sla, force=False):
         # Inform network plugin about the new service
         try:
             net_inform_service_deploy(service, str(last_service_id))
-            mqtt_client.publish(
+            get_mqtt_client().publish(
                 "new/services",
                 f"New Service '{last_service_id}' created for application '{app_id}'.",
             )

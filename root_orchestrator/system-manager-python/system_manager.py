@@ -31,7 +31,7 @@ app = Flask(__name__)
 app.logger.info("T#" * 10)
 
 
-root_mqtt.handle_mqtt()
+root_mqtt.init_mqtt()
 app.logger.info("Zz#" * 10)
 
 

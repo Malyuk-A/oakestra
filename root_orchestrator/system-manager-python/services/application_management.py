@@ -13,6 +13,9 @@ from services.service_management import create_services_of_app, delete_service
 
 
 def register_app(applications, userid):
+
+    print("A#" * 10)
+
     for application in applications["applications"]:
         if mongo_find_app_by_name_and_namespace(
             application.get("application_name"),
@@ -33,10 +36,13 @@ def register_app(applications, userid):
         application["microservices"] = []
         app_id = mongo_add_application(application)
 
+        print("B#" * 10)
+
         # register microservices as well if any
         if app_id:
             if len(microservices) > 0:
                 try:
+                    print("C#" * 10)
                     application["microservices"] = microservices
                     application["applicationID"] = app_id
                     result, status = create_services_of_app(
@@ -47,14 +53,19 @@ def register_app(applications, userid):
                             "applications": [application],
                         },
                     )
+                    print("D#" * 10)
                     if status != 200:
+                        print("d1#" * 10)
                         delete_app(app_id, userid)
+                        print("d2#" * 10)
                         return result, status
                 except Exception:
+                    print("d3#" * 10)
                     print(traceback.format_exc())
                     delete_app(app_id, userid)
                     return {"message": "error during the registration of the microservices"}, 500
 
+    print("Z#" * 10)
     return list(mongo_get_applications_of_user(userid)), 200
 
 
