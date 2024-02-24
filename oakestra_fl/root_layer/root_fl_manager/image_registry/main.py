@@ -1,14 +1,9 @@
 from http import HTTPStatus
 from typing import List, Optional, Tuple
 
-from image_registry.common import docker
-from utils.logging import normal_logger
-
-from oakestra_fl.root_layer.root_fl_manager.image_registry.utils import (
-    FULL_ROOT_FL_IMAGE_REGISTRY_NAME,
-    get_latest_commit_hash,
-    send_reqistry_request,
-)
+from image_registry.common import FULL_ROOT_FL_IMAGE_REGISTRY_NAME, docker
+from image_registry.utils import get_latest_commit_hash, send_reqistry_request
+from utils.logging import logger
 
 
 def check_registry_reachable() -> HTTPStatus:
@@ -35,6 +30,7 @@ def get_current_registry_repo_image_tags(repo_name: str) -> Tuple[HTTPStatus, Op
 
 def latest_image_already_exists(repo_name: str) -> Tuple[HTTPStatus, Optional[str]]:
     status, current_images_repos = get_current_registry_image_repos()
+
     if status != HTTPStatus.OK or repo_name not in current_images_repos:
         return status, None
 
@@ -42,6 +38,7 @@ def latest_image_already_exists(repo_name: str) -> Tuple[HTTPStatus, Optional[st
     if status != HTTPStatus.OK:
         return status, None
     status, latest_commit_hash = get_latest_commit_hash(repo_name)
+
     if status != HTTPStatus.OK:
         return status, None
 
@@ -67,4 +64,4 @@ def push_image_to_root_registry():
 
     docker.images.push(new_image_name)
 
-    normal_logger.info(get_current_registry_image_repos())
+    logger.info(get_current_registry_image_repos())

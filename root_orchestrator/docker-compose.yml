@@ -25,9 +25,6 @@ services:
       - NET_PLUGIN_PORT=10099
       - ROOT_MQTT_BROKER_PORT=9027
       - ROOT_MQTT_BROKER_URL=root_mqtt
-      #- ROOT_FL_MANAGER_URL=root_fl_manager
-      #- ROOT_FL_MANAGER_PORT=5072
-
 
   # MongoDB in Root Orchestrator
   mongo_root:
@@ -147,11 +144,11 @@ services:
       - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
       - /mosquitto/data
       - /mosquitto/log
-    healthcheck:
-      test: [ "CMD-SHELL", "timeout -t 5 mosquitto_sub -t '$$SYS/#' -C 1 | grep -v Error || exit 1" ]
-      interval: 10s
-      timeout: 10s
-      retries: 6
+    # healthcheck:
+    #   test: [ "CMD-SHELL", "timeout -t 5 mosquitto_sub -t '$$SYS/#' -C 1 | grep -v Error || exit 1" ]
+    #   interval: 10s
+    #   timeout: 10s
+    #   retries: 6
 
 volumes:
   mongodb_data:

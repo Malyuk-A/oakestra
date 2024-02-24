@@ -3,9 +3,8 @@ from typing import Any, NamedTuple, Optional, Tuple
 
 import requests
 from api.common import SYSTEM_MANAGER_URL
-from api.main import flask_app_logger
-
-from oakestra_fl.root_layer.root_fl_manager.api.login import get_login_token
+from api.login import get_login_token
+from utils.logging import logger
 
 
 class ApiQuery(NamedTuple):
@@ -66,10 +65,10 @@ def check_api_response(
 ) -> None:
     if response.status_code == HTTPStatus:
         if not hide_msg_on_success:
-            flask_app_logger.info(f"Success: '{what_should_happen}'")
+            logger.info(f"Success: '{what_should_happen}'")
     else:
-        flask_app_logger.error(f"FAILED: '{special_msg_on_fail or what_should_happen}'!")
-        flask_app_logger.error("response:", response)
+        logger.error(f"FAILED: '{special_msg_on_fail or what_should_happen}'!")
+        logger.error("response:", response)
 
 
 def check_api_response_quietly(

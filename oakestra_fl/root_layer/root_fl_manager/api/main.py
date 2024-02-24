@@ -6,7 +6,6 @@ from api.common import ROOT_FL_MANAGER_PORT
 
 info = flask_openapi3.Info(title="Root FL Manager API", version="1.0.0")
 app = flask_openapi3.OpenAPI(__name__, info=info)
-flask_app_logger = app.logger
 
 
 @app.route("/", methods=["GET"])
