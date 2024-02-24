@@ -2,6 +2,7 @@ from http import HTTPStatus
 from typing import Dict
 
 from api.common import GITHUB_PREFIX
+from api.image_builder.main import delegate_image_build
 from image_registry.main import latest_image_already_exists
 from utils.logging import logger
 
@@ -21,5 +22,4 @@ def handle_new_fl_service(new_fl_service: Dict) -> None:
         # TODO logger.info(f"FL service '{service_id}' has been properly prepared")
         return
 
-    # TODO delegate_image_build_and_push()
-    logger.info(f"FL service '{service_id}' has been properly prepared")
+    delegate_image_build(service_id, repo_url)
