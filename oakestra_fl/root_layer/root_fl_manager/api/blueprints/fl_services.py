@@ -2,9 +2,9 @@ from http import HTTPStatus
 
 import flask
 import flask_openapi3
+from api.common import GITHUB_PREFIX
 from image_registry.main import latest_image_already_exists
 from services.main import update_service_image
-from utils.general import GITHUB_PREFIX
 from utils.logging import logger
 
 fl_services_blp = flask_openapi3.APIBlueprint(

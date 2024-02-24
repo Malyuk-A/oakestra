@@ -1,10 +1,11 @@
 from http import HTTPStatus
-from typing import NamedTuple
+from typing import Any, NamedTuple, Optional, Tuple
 
 import requests
-from utils.general import SYSTEM_MANAGER_URL
-from utils.logging import logger
-from utils.login import get_login_token
+from api.common import SYSTEM_MANAGER_URL
+from api.main import logger
+
+from oakestra_fl.root_layer.root_fl_manager.api.login import get_login_token
 
 
 class ApiQuery(NamedTuple):
@@ -27,6 +28,34 @@ def create_system_manager_api_query(
     api_endpoint: str, custom_headers: dict = None, data: dict = None
 ) -> ApiQuery:
     return create_api_query(SYSTEM_MANAGER_URL, api_endpoint, custom_headers, data)
+
+
+def send_request(
+    base_url: str, api_endpoint: str = None, error_msg_subject: str = None
+) -> Tuple[HTTPStatus, Optional[Any]]:
+    url = base_url
+    if api_endpoint is not None:
+        url = f"{base_url}{api_endpoint}"
+
+    try:
+        response = requests.get(url, verify=False)
+        response_status = HTTPStatus(response.status_code)
+        if response_status == HTTPStatus.OK:
+            return response_status, response.json()
+        else:
+            return (
+                response_status,
+                f"{error_msg_subject} request failed with '{response_status}' for '{url}",
+            )
+    except requests.exceptions.RequestException as e:
+        return (
+            HTTPStatus.INTERNAL_SERVER_ERROR,
+            f"{error_msg_subject} request failed with '{e}' for '{url}",
+        )
+
+
+def send_github_request(api_endpoint: str = None) -> Tuple[HTTPStatus, Optional[Any]]:
+    return send_request("https://api.github.com", api_endpoint, "Github")
 
 
 def check_api_response(

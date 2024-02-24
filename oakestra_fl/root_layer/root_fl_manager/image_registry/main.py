@@ -1,15 +1,36 @@
 from http import HTTPStatus
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple
 
-from image_registry.auxiliary import (
+from image_registry.common import docker
+from utils.logging import normal_logger
+
+from oakestra_fl.root_layer.root_fl_manager.image_registry.utils import (
     FULL_ROOT_FL_IMAGE_REGISTRY_NAME,
-    check_registry_reachable,
-    get_current_registry_image_repos,
-    get_current_registry_repo_image_tags,
     get_latest_commit_hash,
+    send_reqistry_request,
 )
-from utils.general import docker
-from utils.logging import logger
+
+
+def check_registry_reachable() -> HTTPStatus:
+    status, _ = send_reqistry_request()
+    return status
+
+
+# Note: (image) repos are the "grouping" of all tags of a single image.
+# E.g. The (image) repo "alpine" can have multiple tags "latest", "1.0.0", etc.
+# We usually first check the image repo and then its tags.
+def get_current_registry_image_repos() -> Tuple[HTTPStatus, Optional[List[str]]]:
+    status, json_data = send_reqistry_request("/v2/_catalog")
+    if status != HTTPStatus.OK:
+        return status, None
+    return status, json_data["repositories"]
+
+
+def get_current_registry_repo_image_tags(repo_name: str) -> Tuple[HTTPStatus, Optional[List[str]]]:
+    status, json_data = send_reqistry_request(f"/v2/{repo_name}/tags/list")
+    if status != HTTPStatus.OK:
+        return status, None
+    return status, json_data["tags"]
 
 
 def latest_image_already_exists(repo_name: str) -> Tuple[HTTPStatus, Optional[str]]:
@@ -46,4 +67,4 @@ def push_image_to_root_registry():
 
     docker.images.push(new_image_name)
 
-    logger.info(get_current_registry_image_repos())
+    normal_logger.info(get_current_registry_image_repos())
