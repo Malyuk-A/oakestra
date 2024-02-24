@@ -2,7 +2,7 @@ from http import HTTPStatus
 from typing import Dict
 
 from api.common import GITHUB_PREFIX
-from api.image_builder.main import delegate_image_build
+from image_builder_management.main import delegate_image_build
 from image_registry.main import latest_image_already_exists
 from utils.logging import logger
 
