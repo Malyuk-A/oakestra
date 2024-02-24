@@ -1,6 +1,6 @@
 import api.utils
 import requests
-from api.main import logger
+from api.main import flask_app_logger
 
 login_token = ""
 
@@ -12,7 +12,7 @@ def login_and_set_token() -> str:
     try:
         response = requests.post(url, headers=headers, json=data)
     except Exception as e:
-        logger.error(e)
+        flask_app_logger.error(e)
         exit(1)
 
     api.utils.check_api_response_quietly(response, what_should_happen="Login")

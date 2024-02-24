@@ -3,9 +3,9 @@ from http import HTTPStatus
 import flask
 import flask_openapi3
 from api.common import GITHUB_PREFIX
+from api.main import flask_app_logger
 from image_registry.main import latest_image_already_exists
 from services.main import update_service_image
-from utils.logging import logger
 
 fl_services_blp = flask_openapi3.APIBlueprint(
     "fl-services",
@@ -23,21 +23,21 @@ def post_fl_service():
         import time
 
         time.sleep(5)
-        logger.debug("Z#" * 10)
-        logger.debug(response)
-        logger.debug("z-" * 10)
+        flask_app_logger.debug("Z#" * 10)
+        flask_app_logger.debug(response)
+        flask_app_logger.debug("z-" * 10)
         return response
 
-    logger.debug("A#" * 10)
+    flask_app_logger.debug("A#" * 10)
     # return {"message": "TESTING"}, HTTPStatus.OK
     return {"message": "TESTING"}
 
     data = flask.request.json
     repo_url = data["code"]
 
-    logger.debug("A#" * 10)
-    logger.debug(data)
-    logger.debug("a-" * 10)
+    flask_app_logger.debug("A#" * 10)
+    flask_app_logger.debug(data)
+    flask_app_logger.debug("a-" * 10)
     update_service_image(data, "alextesting")
     return {"message": "TESTING"}, HTTPStatus.OK
 
