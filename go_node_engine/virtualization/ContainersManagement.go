@@ -4,16 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/containerd/containerd"
-	"github.com/containerd/containerd/cio"
-	"github.com/containerd/containerd/containers"
-	"github.com/containerd/containerd/contrib/nvidia"
-	"github.com/containerd/containerd/namespaces"
-	"github.com/containerd/containerd/oci"
-	"github.com/opencontainers/runtime-spec/specs-go"
-	"github.com/shirou/gopsutil/docker"
-	"github.com/shirou/gopsutil/process"
-	"github.com/struCoder/pidusage"
 	"go_node_engine/logger"
 	"go_node_engine/model"
 	"go_node_engine/requests"
@@ -24,6 +14,17 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/containerd/containerd"
+	"github.com/containerd/containerd/cio"
+	"github.com/containerd/containerd/containers"
+	"github.com/containerd/containerd/contrib/nvidia"
+	"github.com/containerd/containerd/namespaces"
+	"github.com/containerd/containerd/oci"
+	"github.com/opencontainers/runtime-spec/specs-go"
+	"github.com/shirou/gopsutil/docker"
+	"github.com/shirou/gopsutil/process"
+	"github.com/struCoder/pidusage"
 )
 
 type ContainerRuntime struct {
@@ -190,6 +191,49 @@ func (r *ContainerRuntime) containerCreationRoutine(
 	defer resolvconfFile.Close()
 	_ = resolvconfFile.Chmod(444)
 	specOpts = append(specOpts, withCustomResolvConf(resolvconfFile.Name()))
+
+	// Add all Linux capabilities to mimic Docker's --privileged
+	allCaps := []string{
+		"CAP_AUDIT_WRITE",
+		"CAP_BLOCK_SUSPEND",
+		"CAP_CHOWN",
+		"CAP_DAC_OVERRIDE",
+		"CAP_DAC_READ_SEARCH",
+		"CAP_FOWNER",
+		"CAP_FSETID",
+		"CAP_IPC_LOCK",
+		"CAP_IPC_OWNER",
+		"CAP_KILL",
+		"CAP_LAST_CAP",
+		"CAP_LEASE",
+		"CAP_LINUX_IMMUTABLE",
+		"CAP_MAC_ADMIN",
+		"CAP_MAC_OVERRIDE",
+		"CAP_MKNOD",
+		"CAP_NET_ADMIN",
+		"CAP_NET_BIND_SERVICE",
+		"CAP_NET_BROADCAST",
+		"CAP_NET_RAW",
+		"CAP_SETFCAP",
+		"CAP_SETGID",
+		"CAP_SETPCAP",
+		"CAP_SETUID",
+		"CAP_SYS_ADMIN",
+		"CAP_SYS_BOOT",
+		"CAP_SYS_CHROOT",
+		"CAP_SYS_MODULE",
+		"CAP_SYS_NICE",
+		"CAP_SYS_PACCT",
+		"CAP_SYS_PTRACE",
+		"CAP_SYS_RAWIO",
+		"CAP_SYS_RESOURCE",
+		"CAP_SYS_TIME",
+		"CAP_SYS_TTY_CONFIG",
+		"CAP_WAKE_ALARM",
+	}
+	//specOpts = append(specOpts, oci.WithLinuxCapabilities(allCaps))
+	specOpts = append(specOpts, oci.WithCapabilities(allCaps))
+
 
 	// create the container
 	container, err := r.contaierClient.NewContainer(

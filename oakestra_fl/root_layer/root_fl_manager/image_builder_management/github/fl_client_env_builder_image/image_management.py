@@ -26,11 +26,43 @@ def prepare_new_image_name_with_tag(
 
 
 def build_repo_specific_fl_client_env_image(image_name_with_tag: str) -> None:
+    logger.info("Start testing buildah")
+    logger.info("A#" * 10)
+    subprocess.check_call(shlex.split("buildah --version"))
+    logger.info("B#" * 10)
+    subprocess.check_call(shlex.split("buildah images"))
+    logger.info("C#" * 10)
+
     logger.info(f"Start building image: '{image_name_with_tag}'")
-    subprocess.check_call(
-        shlex.split(f"buildah build -f {FL_CLIENT_ENV_IMAGE_DOCKERFILE} -t {image_name_with_tag}")
-    )
+    try:
+        # subprocess.check_call(
+        #     shlex.split(
+        #         f"buildah build -f {FL_CLIENT_ENV_IMAGE_DOCKERFILE} -t {image_name_with_tag}"
+        #     )
+        # )
+        result = subprocess.run(
+            shlex.split(
+                f"buildah build -f {FL_CLIENT_ENV_IMAGE_DOCKERFILE} -t {image_name_with_tag}"
+            ),
+            check=False,
+            # stderr=subprocess.PIPE,
+            text=True,
+        )
+        logger.info("RES#" * 10)
+        logger.info(result)
+        if result.returncode != 0:
+            raise Exception(result)
+
+    except Exception as e:
+        logger.critical(f"Exception Triggered: '{e}'")
+        raise
+
     logger.info(f"Finished building image: '{image_name_with_tag}'")
+
+    logger.info("D#" * 10)
+    subprocess.check_call(shlex.split("buildah images"))
+
+    logger.info("Finished testing buildah")
 
 
 def push_image(image_name_with_tag: str) -> None:

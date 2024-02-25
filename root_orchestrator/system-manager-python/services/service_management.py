@@ -20,6 +20,7 @@ from sla.versioned_sla_parser import parse_sla_json
 
 
 def create_services_of_app(username, sla, force=False):
+
     data = parse_sla_json(sla)
     logging.log(logging.INFO, sla)
     app_id = data.get("applications")[0]["applicationID"]
@@ -29,6 +30,7 @@ def create_services_of_app(username, sla, force=False):
         return {"message": "application not found"}, 404
 
     microservices = data.get("applications")[0].get("microservices")
+
     for i, microservice in enumerate(microservices):
         if not valid_service(microservice):
             return {"message": "invalid service name or namespace"}, 403
@@ -57,6 +59,7 @@ def create_services_of_app(username, sla, force=False):
             return {"message": "failed to deploy service"}, 500
         # TODO: check if service deployed already etc. force=True must force the insertion anyway
 
+    print("Z#" * 10)
     return {"job_id": str(last_service_id)}, 200
 
 

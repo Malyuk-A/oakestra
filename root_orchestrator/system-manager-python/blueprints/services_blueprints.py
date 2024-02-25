@@ -77,7 +77,6 @@ class ServiceController(MethodView):
     @jwt_auth_required()
     def put(self, *args, serviceid):
         """Update service with ID"""
-        print("A#" * 10)
         try:
             username = get_jwt_auth_identity()
             job = (request.get_json()["applications"][0])["microservices"][0]

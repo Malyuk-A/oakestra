@@ -1,0 +1,39 @@
+{
+    "sla_version": "v2.0",
+    "customerID": "Admin",
+    "applications": [
+        {
+            "applicationID": "",
+            "application_name": "flbuild",
+            "application_namespace": "flbuild",
+            "application_desc": "Test to check how the fl_client_env_builder works",
+            "microservices": [
+                {
+                    "microserviceID": "",
+                    "microservice_name": "flbuild",
+                    "microservice_namespace": "flbuild",
+                    "virtualization": "container",
+                    "cmd": [
+                        "python3",
+                        "main.py",
+                        "https://github.com/Malyuk-A/mlflower-test-a",
+                        "https://192.168.178.44:5073",
+                        "123",
+                        "192.168.178.44",
+                        "9027"
+                    ],
+                    "memory": 100,
+                    "vcpus": 1,
+                    "vgpus": 0,
+                    "vtpus": 0,
+                    "bandwidth_in": 0,
+                    "bandwidth_out": 0,
+                    "storage": 0,
+                    "code": "ghcr.io/malyuk-a/fl-client-env-builder:v0.1.2",
+                    "state": "",
+                    "added_files": []
+                }
+            ]
+        }
+    ]
+}
