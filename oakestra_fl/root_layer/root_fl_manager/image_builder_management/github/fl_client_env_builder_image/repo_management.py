@@ -3,7 +3,7 @@ import os
 import pathlib
 
 import git
-from utils.logging import logger
+from util_logging import logger
 
 CLONED_REPO_PATH = pathlib.Path("/cloned_repo")
 
