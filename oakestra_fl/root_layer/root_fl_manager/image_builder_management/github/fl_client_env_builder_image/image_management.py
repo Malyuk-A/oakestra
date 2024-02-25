@@ -3,7 +3,7 @@ import shlex
 import subprocess
 
 import git
-from util_logging import logger
+from util.logging import logger
 
 FL_CLIENT_ENV_IMAGE_DOCKERFILE = pathlib.Path("fl_client_env_image/Dockerfile")
 
