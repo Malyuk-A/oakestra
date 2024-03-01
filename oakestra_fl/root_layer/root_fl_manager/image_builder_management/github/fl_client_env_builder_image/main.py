@@ -21,8 +21,8 @@ def main() -> None:
     check_cloned_repo(cloned_repo)
     image_name_with_tag = prepare_new_image_name_with_tag(cloned_repo, image_registry_url)
 
-    # build_repo_specific_fl_client_env_image(image_name_with_tag)
-    # push_image(image_name_with_tag)
+    build_repo_specific_fl_client_env_image(image_name_with_tag)
+    push_image(image_name_with_tag)
 
     # TODO: Add error handling if build fails - should notify RFLM about this
     # notify_root_fl_manager(mqtt_url, mqtt_port, service_id, image_name_with_tag)
@@ -30,8 +30,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-
-Stuck at getting images to build via buildah using a worker node (containerd)
-(already tried to modify the node engine) the issue is that the build cmd that runs locally suddenly fails
-with an exception without any error message on the worker node

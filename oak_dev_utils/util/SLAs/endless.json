@@ -4,18 +4,18 @@
     "applications": [
         {
             "applicationID": "",
-            "application_name": "oneshot",
-            "application_namespace": "oneshot",
-            "application_desc": "Test to check non-persistent (oneshot) services",
+            "application_name": "flbuild",
+            "application_namespace": "flbuild",
+            "application_desc": "Test to check how the fl_client_env_builder works",
             "microservices": [
                 {
                     "microserviceID": "",
-                    "microservice_name": "oneshot",
-                    "microservice_namespace": "oneshot",
+                    "microservice_name": "flbuild",
+                    "microservice_namespace": "flbuild",
                     "virtualization": "container",
                     "one_shot": true,
                     "cmd": [
-                        "python3", "--version"
+                      "sleep", "infinity"
                     ],
                     "memory": 100,
                     "vcpus": 1,
