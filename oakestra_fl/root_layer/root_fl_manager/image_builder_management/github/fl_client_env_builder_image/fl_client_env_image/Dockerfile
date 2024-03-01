@@ -2,6 +2,8 @@ FROM docker.io/continuumio/miniconda3:24.1.2-0
 LABEL org.opencontainers.image.source https://github.com/oakestra/oakestra
 
 COPY . /
+RUN mv cloned_repo/* . && rm -r cloned_repo
+
 
 # COPY /cloned_repo/conda.yaml .
 # RUN conda env update --file ./conda.yaml &&\

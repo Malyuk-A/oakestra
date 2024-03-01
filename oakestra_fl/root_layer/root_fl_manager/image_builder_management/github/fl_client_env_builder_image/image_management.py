@@ -1,11 +1,10 @@
+import os
 import pathlib
 import shlex
 import subprocess
 
 import git
 from util.logging import logger
-
-FL_CLIENT_ENV_IMAGE_DOCKERFILE = pathlib.Path("fl_client_env_image/Dockerfile")
 
 
 def prepare_new_image_name_with_tag(
@@ -26,6 +25,7 @@ def prepare_new_image_name_with_tag(
 
 
 def build_repo_specific_fl_client_env_image(image_name_with_tag: str) -> None:
+    os.chdir("fl_client_env_image")
     logger.info(f"Start building image: '{image_name_with_tag}'")
     try:
         # subprocess.check_call(
@@ -34,9 +34,7 @@ def build_repo_specific_fl_client_env_image(image_name_with_tag: str) -> None:
         #     )
         # )
         result = subprocess.run(
-            shlex.split(
-                f"buildah build -f {FL_CLIENT_ENV_IMAGE_DOCKERFILE} -t {image_name_with_tag}"
-            ),
+            shlex.split(f"buildah build -t {image_name_with_tag}"),
             check=False,
             # stderr=subprocess.PIPE,
             text=True,
