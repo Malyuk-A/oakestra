@@ -1,0 +1,34 @@
+{
+    "sla_version": "v2.0",
+    "customerID": "Admin",
+    "applications": [
+        {
+            "applicationID": "",
+            "application_name": "oneshot",
+            "application_namespace": "oneshot",
+            "application_desc": "Test to check non-persistent (oneshot) services",
+            "microservices": [
+                {
+                    "microserviceID": "",
+                    "microservice_name": "oneshot",
+                    "microservice_namespace": "oneshot",
+                    "virtualization": "container",
+                    "one_shot": true,
+                    "cmd": [
+                        "python3", "--version"
+                    ],
+                    "memory": 100,
+                    "vcpus": 1,
+                    "vgpus": 0,
+                    "vtpus": 0,
+                    "bandwidth_in": 0,
+                    "bandwidth_out": 0,
+                    "storage": 0,
+                    "code": "ghcr.io/malyuk-a/fl-client-env-builder:latest",
+                    "state": "",
+                    "added_files": []
+                }
+            ]
+        }
+    ]
+}

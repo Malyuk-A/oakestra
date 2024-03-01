@@ -146,12 +146,6 @@ func (r *ContainerRuntime) Undeploy(service string, instance int) error {
 	return errors.New("service not found")
 }
 
-// func uint32Ptr(i int) *uint32 {
-// 	u := uint32(i)
-// 	return &u
-// }
-
-
 func (r *ContainerRuntime) containerCreationRoutine(
 	ctx context.Context,
 	image containerd.Image,
@@ -172,21 +166,6 @@ func (r *ContainerRuntime) containerCreationRoutine(
 		r.killQueue[hostname] = nil
 	}
 
-
-	// var WithPrivileged = oci.Compose(
-	// 	oci.WithAllCurrentCapabilities,
-	// 	oci.WithMaskedPaths(nil),
-	// 	oci.WithReadonlyPaths(nil),
-	// 	oci.WithWriteableSysfs,
-	// 	oci.WithWriteableCgroupfs,
-	// 	oci.WithSelinuxLabel(""),
-	// 	oci.WithApparmorProfile(""),
-	// 	oci.WithSeccompUnconfined,
-	// )
-
-	//create container general oci specs
-	//fileMode := fs.FileMode(0666)
-	
 	specOpts := []oci.SpecOpts{
 		oci.WithImageConfig(image),
 		oci.WithHostHostsFile,
@@ -194,20 +173,7 @@ func (r *ContainerRuntime) containerCreationRoutine(
 		
 		oci.WithEnv(append([]string{fmt.Sprintf("HOSTNAME=%s", hostname)}, service.Env...)),
 
-		//oci.WithPrivileged,
 		oci.WithDevices("/dev/fuse", "/dev/fuse", "rwm"),
-
-		// oci.WithDevices([]specs.LinuxDevice{
-		// 	{
-		// 		Path: "/dev/fuse",
-		// 		Type: "c",
-		// 		Major: 10, // Major number for FUSE device
-		// 		Minor: 229, // Minor number for FUSE device
-		// 		FileMode: &fileMode,
-		// 		UID: uint32Ptr(0),
-		// 		GID: uint32Ptr(0),
-		// 	},
-		// }),
 	}
 	//add user defined commands
 	if len(service.Commands) > 0 {
@@ -295,22 +261,31 @@ func (r *ContainerRuntime) containerCreationRoutine(
 		return
 	}
 
+	logger.InfoLogger().Printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+	
 	// adv startup finished
 	startup <- true
 
 	// wait for manual task kill or task finish
 	select {
 	case exitStatus := <-exitStatusC:
+		if exitStatus.ExitCode() == 0 && service.OneShot {
+			service.Status = model.SERVICE_COMPLETED		
+		}
 		//TODO: container exited, do something, notify to cluster manager
 		if err != nil {
 			return
 		}
-		logger.InfoLogger().Printf("WARNING: Container exited with status %d", exitStatus.ExitCode())
+		logger.InfoLogger().Printf("Container exited with status %d", exitStatus.ExitCode())
 		service.StatusDetail = fmt.Sprintf("Container exited with status: %d", exitStatus.ExitCode())
 	case <-*killChannel:
 		logger.InfoLogger().Printf("Kill channel message received for task %s", task.ID())
 	}
-	service.Status = model.SERVICE_DEAD
+
+	if service.Status != model.SERVICE_COMPLETED {
+		service.Status = model.SERVICE_DEAD
+	}
+
 	//detaching network
 	if model.GetNodeInfo().Overlay {
 		_ = requests.DetachNetworkFromTask(service.Sname, service.Instance)
