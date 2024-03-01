@@ -146,6 +146,12 @@ func (r *ContainerRuntime) Undeploy(service string, instance int) error {
 	return errors.New("service not found")
 }
 
+// func uint32Ptr(i int) *uint32 {
+// 	u := uint32(i)
+// 	return &u
+// }
+
+
 func (r *ContainerRuntime) containerCreationRoutine(
 	ctx context.Context,
 	image containerd.Image,
@@ -166,12 +172,42 @@ func (r *ContainerRuntime) containerCreationRoutine(
 		r.killQueue[hostname] = nil
 	}
 
+
+	// var WithPrivileged = oci.Compose(
+	// 	oci.WithAllCurrentCapabilities,
+	// 	oci.WithMaskedPaths(nil),
+	// 	oci.WithReadonlyPaths(nil),
+	// 	oci.WithWriteableSysfs,
+	// 	oci.WithWriteableCgroupfs,
+	// 	oci.WithSelinuxLabel(""),
+	// 	oci.WithApparmorProfile(""),
+	// 	oci.WithSeccompUnconfined,
+	// )
+
 	//create container general oci specs
+	//fileMode := fs.FileMode(0666)
+	
 	specOpts := []oci.SpecOpts{
 		oci.WithImageConfig(image),
 		oci.WithHostHostsFile,
 		oci.WithHostname(hostname),
+		
 		oci.WithEnv(append([]string{fmt.Sprintf("HOSTNAME=%s", hostname)}, service.Env...)),
+
+		//oci.WithPrivileged,
+		oci.WithDevices("/dev/fuse", "/dev/fuse", "rwm"),
+
+		// oci.WithDevices([]specs.LinuxDevice{
+		// 	{
+		// 		Path: "/dev/fuse",
+		// 		Type: "c",
+		// 		Major: 10, // Major number for FUSE device
+		// 		Minor: 229, // Minor number for FUSE device
+		// 		FileMode: &fileMode,
+		// 		UID: uint32Ptr(0),
+		// 		GID: uint32Ptr(0),
+		// 	},
+		// }),
 	}
 	//add user defined commands
 	if len(service.Commands) > 0 {
@@ -191,49 +227,6 @@ func (r *ContainerRuntime) containerCreationRoutine(
 	defer resolvconfFile.Close()
 	_ = resolvconfFile.Chmod(444)
 	specOpts = append(specOpts, withCustomResolvConf(resolvconfFile.Name()))
-
-	// Add all Linux capabilities to mimic Docker's --privileged
-	allCaps := []string{
-		"CAP_AUDIT_WRITE",
-		"CAP_BLOCK_SUSPEND",
-		"CAP_CHOWN",
-		"CAP_DAC_OVERRIDE",
-		"CAP_DAC_READ_SEARCH",
-		"CAP_FOWNER",
-		"CAP_FSETID",
-		"CAP_IPC_LOCK",
-		"CAP_IPC_OWNER",
-		"CAP_KILL",
-		"CAP_LAST_CAP",
-		"CAP_LEASE",
-		"CAP_LINUX_IMMUTABLE",
-		"CAP_MAC_ADMIN",
-		"CAP_MAC_OVERRIDE",
-		"CAP_MKNOD",
-		"CAP_NET_ADMIN",
-		"CAP_NET_BIND_SERVICE",
-		"CAP_NET_BROADCAST",
-		"CAP_NET_RAW",
-		"CAP_SETFCAP",
-		"CAP_SETGID",
-		"CAP_SETPCAP",
-		"CAP_SETUID",
-		"CAP_SYS_ADMIN",
-		"CAP_SYS_BOOT",
-		"CAP_SYS_CHROOT",
-		"CAP_SYS_MODULE",
-		"CAP_SYS_NICE",
-		"CAP_SYS_PACCT",
-		"CAP_SYS_PTRACE",
-		"CAP_SYS_RAWIO",
-		"CAP_SYS_RESOURCE",
-		"CAP_SYS_TIME",
-		"CAP_SYS_TTY_CONFIG",
-		"CAP_WAKE_ALARM",
-	}
-	//specOpts = append(specOpts, oci.WithLinuxCapabilities(allCaps))
-	specOpts = append(specOpts, oci.WithCapabilities(allCaps))
-
 
 	// create the container
 	container, err := r.contaierClient.NewContainer(

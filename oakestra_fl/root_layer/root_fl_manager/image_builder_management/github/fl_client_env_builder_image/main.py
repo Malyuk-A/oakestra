@@ -30,3 +30,8 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+Stuck at getting images to build via buildah using a worker node (containerd)
+(already tried to modify the node engine) the issue is that the build cmd that runs locally suddenly fails
+with an exception without any error message on the worker node

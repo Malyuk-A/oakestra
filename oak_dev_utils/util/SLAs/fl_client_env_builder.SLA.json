@@ -14,16 +14,7 @@
                     "microservice_namespace": "flbuild",
                     "virtualization": "container",
                     "cmd": [
-                        "python3",
-                        "main.py",
-                        "https://github.com/Malyuk-A/mlflower-test-a",
-                        "https://192.168.178.44:5073",
-                        "123",
-                        "192.168.178.44",
-                        "9027",
-                        ";",
-                        "buildah",
-                        "images"
+                        "sleep", "infinity"
                     ],
                     "memory": 100,
                     "vcpus": 1,
