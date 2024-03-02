@@ -2,6 +2,7 @@ import os
 import pathlib
 import shlex
 import subprocess
+import sys
 
 import git
 from util.logging import logger
@@ -25,6 +26,10 @@ def prepare_new_image_name_with_tag(
 
 
 def build_repo_specific_fl_client_env_image(image_name_with_tag: str) -> None:
+    # Important: Be very careful how and where you run buildah.
+    # If you run buildah incorrectly it can easily kill your host system.
+    # (Due to its necessary elevated privileges for building.)
+    # E.g. Mismatch between current directory and target Dockerfile to build.
     os.chdir("fl_client_env_image")
     logger.info(f"Start building image: '{image_name_with_tag}'")
     try:
@@ -44,7 +49,8 @@ def build_repo_specific_fl_client_env_image(image_name_with_tag: str) -> None:
 
     except Exception as e:
         logger.critical(f"Exception Triggered: '{e}'")
-        raise
+        sys.exit(27)
+        # raise -> This might be able to kill my docker host farm ............ wtf
 
     logger.info(f"Finished building image: '{image_name_with_tag}'")
 

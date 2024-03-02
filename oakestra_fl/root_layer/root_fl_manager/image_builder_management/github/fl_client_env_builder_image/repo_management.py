@@ -1,13 +1,16 @@
 import errno
 import os
 import pathlib
+import shutil
 
 import git
 from dependency_management.main import handle_dependencies
 from util.common import CONDA_ENV_FILE, run_in_bash
 from util.logging import logger
 
-CLONED_REPO_PATH = pathlib.Path("fl_client_env_image/cloned_repo")
+FL_CLIENT_ENV_IMAGE_PATH = pathlib.Path("fl_client_env_image")
+CLONED_REPO_PATH = FL_CLIENT_ENV_IMAGE_PATH / "cloned_repo"
+FL_ENV_PATH = FL_CLIENT_ENV_IMAGE_PATH / "fl_env"
 
 
 def clone_repo(repo_url: str) -> git.repo.base.Repo:
@@ -17,6 +20,16 @@ def clone_repo(repo_url: str) -> git.repo.base.Repo:
 
 def check_conda_env_name() -> None:
     run_in_bash(f"sed -i -e 's/name: mlflow-env/name: base/' {CONDA_ENV_FILE}")
+
+
+def copy_verified_repo_content_into_fl_env() -> None:
+    for item in CLONED_REPO_PATH.iterdir():
+        src = item
+        dst = FL_ENV_PATH / item.name
+        if src.is_file():
+            shutil.copy2(src, dst)
+        elif src.is_dir():
+            shutil.copytree(src, dst, dirs_exist_ok=True)
 
 
 # Note: Further checks can be added here, e.g.:
@@ -37,3 +50,4 @@ def check_cloned_repo(cloned_repo: git.repo.base.Repo) -> None:
 
     check_conda_env_name()
     handle_dependencies()
+    copy_verified_repo_content_into_fl_env()
