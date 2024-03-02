@@ -4,15 +4,13 @@ LABEL org.opencontainers.image.source https://github.com/oakestra/oakestra
 COPY . /
 RUN mv cloned_repo/* . && rm -r cloned_repo
 
-
-# COPY /cloned_repo/conda.yaml .
-# RUN conda env update --file ./conda.yaml &&\
-#     # https://flower.dev/docs/framework/how-to-install-flower.html
-#     conda config --add channels conda-forge &&\
-#     conda config --set channel_priority strict &&\
-#     conda install mlflow flwr &&\
-#     conda clean -tipy
-# SHELL ["conda", "run", "-n", "base", "/bin/bash", "-c"]
+RUN conda env update --file ./conda.yaml &&\
+    # https://flower.dev/docs/framework/how-to-install-flower.html
+    conda config --add channels conda-forge &&\
+    conda config --set channel_priority strict &&\
+    conda install mlflow flwr &&\
+    conda clean -tipy
+SHELL ["conda", "run", "-n", "base", "/bin/bash", "-c"]
 
 # # Not sure if this is the best way
 # COPY /cloned_repo/* .
