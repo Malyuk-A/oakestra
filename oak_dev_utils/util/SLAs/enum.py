@@ -6,4 +6,5 @@ class KnownSLA(CustomEnum):
     BLANK = "blank_app_without_services"
     FL = "fl_app"
     BUILDER = "fl_client_env_builder"
-    ENDLESS = "endless"
+    ENDLESS_BUILDER = "endless_builder"
+    ENDLESS_CONDA = "endless_conda"

@@ -14,6 +14,7 @@ services:
       - SYSTEM_MANAGER_PORT=10000
       - ROOT_MQTT_BROKER_PORT=9027
       - ROOT_MQTT_BROKER_URL=root_mqtt
+      - CAROOT=/etc/ssl
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ssl:/etc/ssl
@@ -29,8 +30,8 @@ services:
     container_name: root_fl_image_registry
     environment:
       - REGISTRY_HTTP_ADDR=0.0.0.0:5073
-      - REGISTRY_HTTP_TLS_CERTIFICATE=/etc/ssl/cert.pem
-      - REGISTRY_HTTP_TLS_KEY=/etc/ssl/key.pem
+      - REGISTRY_HTTP_TLS_CERTIFICATE=/etc/ssl/registry.pem
+      - REGISTRY_HTTP_TLS_KEY=/etc/ssl/registry-key.pem
     volumes:
       - registry_data:/var/lib/registry
       - ssl:/etc/ssl

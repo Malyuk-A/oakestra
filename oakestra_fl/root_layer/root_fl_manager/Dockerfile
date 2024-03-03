@@ -1,7 +1,11 @@
 FROM python:3.10-slim-buster
 LABEL org.opencontainers.image.source https://github.com/oakestra/oakestra
 
-RUN apt-get update && apt-get install git -y && apt-get clean
+RUN apt-get update && apt-get install git wget libnss3-tools -y && apt-get clean
+
+RUN wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-linux-amd64 &&\
+    mv mkcert-v1.4.4-linux-amd64 /usr/bin/mkcert &&\
+    chmod +x /usr/bin/mkcert
 
 ADD requirements.txt /
 
@@ -19,5 +23,7 @@ EXPOSE $ROOT_FL_MANAGER_PORT
 
 ENV ROOT_MQTT_BROKER_PORT=9027
 ENV ROOT_MQTT_BROKER_URL=root_mqtt
+
+ENV CAROOT=/etc/ssl
 
 CMD ["python", "root_fl_manager.py"]

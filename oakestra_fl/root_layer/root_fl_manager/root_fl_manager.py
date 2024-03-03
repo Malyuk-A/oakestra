@@ -2,11 +2,11 @@ import threading
 
 from api.main import handle_api
 from mqtt.main import handle_mqtt
-from utils.pki_management import handle_pki
+from utils.certificate_management import handle_ca_and_certificates
 
 
 def main():
-    handle_pki()
+    handle_ca_and_certificates()
     threading.Thread(target=handle_api).start()
     handle_mqtt()
 

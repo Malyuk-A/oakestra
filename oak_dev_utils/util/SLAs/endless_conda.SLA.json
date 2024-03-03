@@ -4,14 +4,14 @@
     "applications": [
         {
             "applicationID": "",
-            "application_name": "endless",
-            "application_namespace": "endless",
+            "application_name": "endlessc",
+            "application_namespace": "endlessc",
             "application_desc": "Test to check how the fl_client_env_builder works",
             "microservices": [
                 {
                     "microserviceID": "",
-                    "microservice_name": "endless",
-                    "microservice_namespace": "endless",
+                    "microservice_name": "endlessc",
+                    "microservice_namespace": "endlessc",
                     "virtualization": "container",
                     "one_shot": false,
                     "cmd": [
@@ -24,7 +24,7 @@
                     "bandwidth_in": 0,
                     "bandwidth_out": 0,
                     "storage": 0,
-                    "code": "ghcr.io/malyuk-a/fl-client-env-builder:v0.1.7",
+                    "code": "192.168.178.44:5073/malyuk-a/mlflower-test-a:f63f795f6a7b4094a5a9a0210af45fd121532507",
                     "state": "",
                     "added_files": []
                 }

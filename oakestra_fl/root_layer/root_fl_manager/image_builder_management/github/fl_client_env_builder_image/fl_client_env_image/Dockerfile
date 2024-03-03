@@ -4,12 +4,14 @@ LABEL org.opencontainers.image.source https://github.com/oakestra/oakestra
 COPY fl_env fl_env
 WORKDIR /fl_env
 
-RUN conda env update --file ./conda.yaml &&\
-    # https://flower.dev/docs/framework/how-to-install-flower.html
-    conda config --add channels conda-forge &&\
-    conda config --set channel_priority strict &&\
-    conda install flwr -y &&\
-    conda clean -tipy
+RUN conda env update --file ./conda.yaml
+
+# RUN conda env update --file ./conda.yaml &&\
+#     # https://flower.dev/docs/framework/how-to-install-flower.html
+#     conda config --add channels conda-forge &&\
+#     conda config --set channel_priority strict &&\
+#     conda install flwr -y &&\
+#     conda clean -tipy
 # SHELL ["conda", "run", "-n", "base", "/bin/bash", "-c"]
 
 # https://flower.dev/docs/framework/ref-telemetry.html

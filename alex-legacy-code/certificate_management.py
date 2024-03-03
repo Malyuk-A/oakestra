@@ -96,7 +96,7 @@ def create_cert(is_ca: bool, cert_name: str) -> None:
         f.write(new_certificate.public_bytes(serialization.Encoding.PEM))
 
 
-def handle_pki():
+def check_init_ca_and_certificates():
     create_private_key(CA_KEY_PATH)
     create_cert(is_ca=True, cert_name="Oakestra Root FL Manager CA Certificate")
 

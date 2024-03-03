@@ -24,6 +24,9 @@ var LogDirectory = flag.String("logs", "/tmp", "Directory for application's logs
 const MONITORING_CYCLE = time.Second * 2
 
 func main() {
+
+	logger.InfoLogger().Printf("AAAAAAAAAAAAAAAAAAAAAA")
+
 	flag.Parse()
 
 	//set log directory
@@ -85,3 +88,4 @@ func clusterHandshake() requests.HandshakeAnswer {
 	model.SetNodeId(clusterReponse.NodeId)
 	return clusterReponse
 }
+
