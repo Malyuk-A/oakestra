@@ -173,7 +173,22 @@ func (r *ContainerRuntime) containerCreationRoutine(
 		
 		oci.WithEnv(append([]string{fmt.Sprintf("HOSTNAME=%s", hostname)}, service.Env...)),
 
+		// oci.WithAllDevicesAllowed,
+
+		
+		// oci.WithPrivileged,
+		
+		// oci.WithHostDevices, -> Leads to FAILED immediatelly (also for default app)
+
+
+		//oci.WithParentCgroupDevices, // -> Does not help with "invalid file system type on '/sys/fs/cgroup'" error
+		// oci.WithCgroup("oakestra"), // -> not working
+
 		oci.WithDevices("/dev/fuse", "/dev/fuse", "rwm"),
+
+		//oci.WithCgroup("/sys/fs/cgroup/oakestra"),
+		oci.WithPrivileged,
+
 	}
 	//add user defined commands
 	if len(service.Commands) > 0 {
@@ -193,6 +208,32 @@ func (r *ContainerRuntime) containerCreationRoutine(
 	defer resolvconfFile.Close()
 	_ = resolvconfFile.Chmod(444)
 	specOpts = append(specOpts, withCustomResolvConf(resolvconfFile.Name()))
+
+	cgroupMount := specs.Mount{
+		Type:        "cgroup",
+		Source:      "cgroup",
+		Destination: "/sys/fs/cgroup",
+		Options:     []string{"nosuid", "noexec", "nodev"},
+	}
+	specOpts = append(specOpts, oci.WithMounts([]specs.Mount{cgroupMount}))
+
+
+	// cgroupMount := mount.Mount{
+	// 	Type:    "cgroup",
+	// 	Source: "cgroup",
+	// 	Target: "/sys/fs/cgroup",
+	// 	Options: []string{"rw", "nosuid", "nodev", "noexec", "relatime", "nsdelegate"},
+	// }
+	// err = cgroupMount.Mount("/path/to/container/rootfs")
+	// if err != nil {
+	// 	log.Fatalf("Failed to mount cgroup filesystem: %v", err)
+	// }
+	// defer func() {
+	// 	err = cgroupMount.Unmount("/path/to/container/rootfs")
+	// 	if err != nil {
+	// 		log.Fatalf("Failed to unmount cgroup filesystem: %v", err)
+	// 	}
+	// }()
 
 	// create the container
 	container, err := r.contaierClient.NewContainer(
