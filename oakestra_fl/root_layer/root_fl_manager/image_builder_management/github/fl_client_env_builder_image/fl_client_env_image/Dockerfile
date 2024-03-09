@@ -1,10 +1,18 @@
 FROM docker.io/continuumio/miniconda3:24.1.2-0
 LABEL org.opencontainers.image.source https://github.com/oakestra/oakestra
 
+
+
 COPY fl_env fl_env
 WORKDIR /fl_env
 
-RUN conda env update --file ./conda.yaml
+
+
+
+#RUN conda info > info.txt
+#RUN conda config --show > config.txt
+#RUN conda env update --file ./conda.yaml
+#RUN conda search mlflow==2.6.0 > mlflow.txt
 
 # RUN conda env update --file ./conda.yaml &&\
 #     # https://flower.dev/docs/framework/how-to-install-flower.html

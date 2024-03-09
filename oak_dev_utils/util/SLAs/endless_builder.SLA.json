@@ -24,7 +24,7 @@
                     "bandwidth_in": 0,
                     "bandwidth_out": 0,
                     "storage": 0,
-                    "code": "ghcr.io/malyuk-a/fl-client-env-builder:v0.1.7",
+                    "code": "ghcr.io/malyuk-a/fl-client-env-builder:v0.1.9",
                     "state": "",
                     "added_files": []
                 }

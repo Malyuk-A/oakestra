@@ -1,16 +1,11 @@
 import errno
 import os
-import pathlib
 import shutil
 
 import git
 from dependency_management.main import handle_dependencies
-from util.common import CONDA_ENV_FILE, run_in_bash
+from util.common import CLONED_REPO_PATH, CONDA_ENV_FILE_PATH, FL_ENV_PATH, run_in_bash
 from util.logging import logger
-
-FL_CLIENT_ENV_IMAGE_PATH = pathlib.Path("fl_client_env_image")
-CLONED_REPO_PATH = FL_CLIENT_ENV_IMAGE_PATH / "cloned_repo"
-FL_ENV_PATH = FL_CLIENT_ENV_IMAGE_PATH / "fl_env"
 
 
 def clone_repo(repo_url: str) -> git.repo.base.Repo:
@@ -19,7 +14,7 @@ def clone_repo(repo_url: str) -> git.repo.base.Repo:
 
 
 def check_conda_env_name() -> None:
-    run_in_bash(f"sed -i -e 's/name: mlflow-env/name: base/' {CONDA_ENV_FILE}")
+    run_in_bash(f"sed -i -e 's/name: mlflow-env/name: base/' {CONDA_ENV_FILE_PATH}")
 
 
 def copy_verified_repo_content_into_fl_env() -> None:
@@ -40,7 +35,7 @@ def copy_verified_repo_content_into_fl_env() -> None:
 def check_cloned_repo(cloned_repo: git.repo.base.Repo) -> None:
     root_tree = cloned_repo.tree()
 
-    files_to_check = ["client.py", CONDA_ENV_FILE]
+    files_to_check = ["client.py", CONDA_ENV_FILE_PATH.name]
     for file in files_to_check:
         if file not in [blob.name for blob in root_tree.blobs]:
             logger.critical(f"{file} not found in the cloned repository.")
