@@ -3,7 +3,6 @@ import shlex
 import subprocess
 import sys
 
-import buildah
 import git
 from util.common import FL_ENV_PATH, run_in_bash
 from util.logging import logger
@@ -26,18 +25,7 @@ def prepare_new_image_name_with_tag(
     return new_image_name_with_tag
 
 
-def prepare_and_resolve_dependencies() -> None:
-    print("A" * 10)
-    run_in_bash("conda activate")
-    run_in_bash(f"conda env update --file {FL_ENV_PATH}/conda.yaml ")
-    run_in_bash("conda deactivate")
-    print("Z" * 10)
-
-
 def build_repo_specific_fl_client_env_image(image_name_with_tag: str) -> None:
-
-    buildah.
-
     # Important: Be very careful how and where you run buildah.
     # If you run buildah incorrectly it can easily kill your host system.
     # (Due to its necessary elevated privileges for building.)
@@ -51,7 +39,7 @@ def build_repo_specific_fl_client_env_image(image_name_with_tag: str) -> None:
         #     )
         # )
         result = subprocess.run(
-            shlex.split(f"buildah build -t {image_name_with_tag}"),
+            shlex.split(f"buildah build --isolation=chroot -t {image_name_with_tag}"),
             check=False,
             # stderr=subprocess.PIPE,
             text=True,

@@ -76,31 +76,21 @@ func (r *ContainerRuntime) StopContainerdClient() {
 
 func (r *ContainerRuntime) Deploy(service model.Service, statusChangeNotificationHandler func(service model.Service)) error {
 
-	logger.InfoLogger().Printf("1111111111111111111111111111111")
-
 	var image containerd.Image
 	// pull the given image
 	sysimg, err := r.contaierClient.ImageService().Get(r.ctx, service.Image)
-	logger.InfoLogger().Printf("2222222222222222222222222")
 	if err == nil {
-		logger.InfoLogger().Printf("2aaaaaaaaaaaaaaaaaaa")
 		image = containerd.NewImage(r.contaierClient, sysimg)
 	} else {
-		logger.InfoLogger().Printf("2bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
 		logger.InfoLogger().Printf("Error retrieving the image: %v \n Trying to pull the image online.", err)
 
 		logger.ErrorLogger().Printf("Error retrieving the image: %v \n Trying to pull the image online.", err)
 
-		logger.InfoLogger().Printf("2b1111111111111111111111")
 		image, err = r.contaierClient.Pull(r.ctx, service.Image, containerd.WithPullUnpack)
-		logger.InfoLogger().Printf("2b22222222222222222222222")
 		if err != nil {
-			logger.InfoLogger().Printf("2bAAAAAAAAAAAAAA")
 			return err
 		}
-		logger.InfoLogger().Printf("2bBBBBBBBBBBBBBBBBBBBBBB")
 	}
-	logger.InfoLogger().Printf("3333333333333333333333333333")
 
 	killChannel := make(chan bool, 1)
 	startupChannel := make(chan bool, 0)
@@ -168,8 +158,6 @@ func (r *ContainerRuntime) containerCreationRoutine(
 	statusChangeNotificationHandler func(service model.Service),
 ) {
 
-	logger.InfoLogger().Printf("0000000000000000000000000000000000000000")
-
 	hostname := genTaskID(service.Sname, service.Instance)
 
 	revert := func(err error) {
@@ -187,13 +175,7 @@ func (r *ContainerRuntime) containerCreationRoutine(
 		
 		oci.WithEnv(append([]string{fmt.Sprintf("HOSTNAME=%s", hostname)}, service.Env...)),
 
-		// oci.WithHostDevices, -> Leads to FAILED immediatelly (also for default app)
-		// oci.WithParentCgroupDevices, // -> Does not help with "invalid file system type on '/sys/fs/cgroup'" error
-		// oci.WithCgroup("oakestra"), // -> not working
-
 		oci.WithDevices("/dev/fuse", "/dev/fuse", "rwm"),
-		oci.WithPrivileged,
-
 	}
 	//add user defined commands
 	if len(service.Commands) > 0 {
@@ -213,17 +195,6 @@ func (r *ContainerRuntime) containerCreationRoutine(
 	defer resolvconfFile.Close()
 	_ = resolvconfFile.Chmod(444)
 	specOpts = append(specOpts, withCustomResolvConf(resolvconfFile.Name()))
-
-	cgroupMount := specs.Mount{
-		Type:        "cgroup",
-		Source:      "cgroup",
-		Destination: "/sys/fs/cgroup",
-		Options:     []string{"nosuid", "noexec", "nodev"},
-	}
-	specOpts = append(specOpts, oci.WithMounts([]specs.Mount{cgroupMount}))
-
-
-	logger.InfoLogger().Printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
 
 	// create the container
 	container, err := r.contaierClient.NewContainer(
