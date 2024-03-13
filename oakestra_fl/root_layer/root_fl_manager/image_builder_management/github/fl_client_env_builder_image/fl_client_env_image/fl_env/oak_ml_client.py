@@ -1,9 +1,11 @@
+import logging
+
 import flwr
 from custom_client import Client as CustomClient
-import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 class OakMLClient(flwr.client.NumPyClient, CustomClient):
 
@@ -20,14 +22,16 @@ class OakMLClient(flwr.client.NumPyClient, CustomClient):
         loss, accuracy, number_of_evaluation_examples = self.evaluate_model()
         return loss, number_of_evaluation_examples, {"accuracy": accuracy}
 
-def start_fl_client():
+
+def _start_fl_client():
     try:
-        #client = Client(args).to_client()
-        #flwr.client.start_client(server_address="server:8080", client=OakMLClient)
+        # client = Client(args).to_client()
+        # flwr.client.start_client(server_address="server:8080", client=OakMLClient)
         flwr.client.start_numpy_client(server_address="server:8080", client=OakMLClient())
     except Exception as e:
         logger.error("Error starting FL client: %s", e)
         return {"status": "error", "message": str(e)}
 
+
 if __name__ == "__main__":
-    start_fl_client()
+    _start_fl_client()

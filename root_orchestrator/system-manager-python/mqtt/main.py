@@ -10,6 +10,7 @@ mqtt_client = None
 
 
 def reconnect(client):
+
     FIRST_RECONNECT_DELAY = 1
     RECONNECT_RATE = 2
     MAX_RECONNECT_COUNT = 12
@@ -42,7 +43,6 @@ def init_mqtt() -> paho_mqtt.Client:
             reconnect(client)
 
     mqtt_client.on_disconnect = on_disconnect
-
     mqtt_client.connect(ROOT_MQTT_BROKER_URL, int(ROOT_MQTT_BROKER_PORT))
     return mqtt_client
 

@@ -13,6 +13,7 @@ def handle_new_fl_service(new_fl_service: Dict) -> None:
     repo_name = repo_url.split(GITHUB_PREFIX)[-1]
 
     status, existing_image_name = latest_image_already_exists(repo_name)
+
     if status != HTTPStatus.OK:
         logger.critical(f"Failed to check latest image based on this repo name: '{repo_name}'")
         return
@@ -22,4 +23,4 @@ def handle_new_fl_service(new_fl_service: Dict) -> None:
         # TODO logger.info(f"FL service '{service_id}' has been properly prepared")
         return
 
-    delegate_image_build(service_id, repo_url)
+    delegate_image_build(service_id, repo_url, repo_name)

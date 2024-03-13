@@ -1,9 +1,7 @@
 from http import HTTPStatus
 from typing import List, Optional, Tuple
 
-from image_registry.common import FULL_ROOT_FL_IMAGE_REGISTRY_NAME, docker
 from image_registry.utils import get_latest_commit_hash, send_reqistry_request
-from utils.logging import logger
 
 
 def check_registry_reachable() -> HTTPStatus:
@@ -46,22 +44,3 @@ def latest_image_already_exists(repo_name: str) -> Tuple[HTTPStatus, Optional[st
         return status, f"{repo_name}:{latest_commit_hash}"
     else:
         return status, None
-
-
-def push_image_to_root_registry():
-    status = check_registry_reachable()
-    if status != HTTPStatus.OK:
-        return status
-
-    pulled_image_name = "alpine:latest"
-    docker.images.pull(pulled_image_name)
-
-    # new_image_name = f"{EXTERNAL_ROOT_FL_IMAGE_REGISTRY_NAME}/alpinum:latest-testalex6"
-    # new_image_name = "192.168.178.44:5073/alpinum:latest-testalex7"
-    new_image_name = f"{FULL_ROOT_FL_IMAGE_REGISTRY_NAME}/alpinum3:latest"
-
-    docker.images.get(pulled_image_name).tag(new_image_name)
-
-    docker.images.push(new_image_name)
-
-    logger.info(get_current_registry_image_repos())

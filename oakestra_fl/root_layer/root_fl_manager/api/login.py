@@ -1,28 +1,36 @@
-import api.utils
-import requests
-from utils.logging import logger
+from http import HTTPStatus
 
-login_token = ""
+from api.common import SYSTEM_MANAGER_URL, HttpMethod
+from api.utils import handle_request
+
+_login_token = ""
 
 
-def login_and_set_token() -> str:
+class LoginFailed(Exception):
+    pass
+
+
+def _login_and_set_token() -> str:
     data = {"username": "Admin", "password": "Admin"}
     headers = {"accept": "application/json", "Content-Type": "application/json"}
-    url, headers, data = api.utils.create_system_manager_api_query("/api/auth/login", headers, data)
-    try:
-        response = requests.post(url, headers=headers, json=data)
-    except Exception as e:
-        logger.error(e)
-        exit(1)
 
-    api.utils.check_api_response_quietly(response, what_should_happen="Login")
+    status, json_data = handle_request(
+        base_url=SYSTEM_MANAGER_URL,
+        http_method=HttpMethod.Post,
+        api_endpoint="/api/auth/login",
+        headers=headers,
+        data=data,
+        what_should_happen="Login",
+    )
+    if status != HTTPStatus.OK:
+        raise LoginFailed()
 
-    global login_token
-    login_token = response.json()["token"]
-    return login_token
+    global _login_token
+    _login_token = json_data.json()["token"]
+    return _login_token
 
 
 def get_login_token() -> str:
-    if login_token == "":
-        return login_and_set_token()
-    return login_token
+    if _login_token == "":
+        return _login_and_set_token()
+    return _login_token

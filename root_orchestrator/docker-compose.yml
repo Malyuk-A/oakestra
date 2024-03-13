@@ -134,7 +134,7 @@ services:
       - mongo_root
 
   root_mqtt:
-    image: eclipse-mosquitto:2.0
+    image: eclipse-mosquitto:2
     hostname: root_mqtt
     container_name: root_mqtt
     restart: unless-stopped
@@ -144,11 +144,11 @@ services:
       - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
       - /mosquitto/data
       - /mosquitto/log
-    # healthcheck:
-    #   test: [ "CMD-SHELL", "timeout -t 5 mosquitto_sub -t '$$SYS/#' -C 1 | grep -v Error || exit 1" ]
-    #   interval: 10s
-    #   timeout: 10s
-    #   retries: 6
+    healthcheck:
+      test: [ "CMD-SHELL", "timeout -t 5 mosquitto_sub -t '$$SYS/#' -C 1 | grep -v Error || exit 1" ]
+      interval: 10s
+      timeout: 10s
+      retries: 6
 
 volumes:
   mongodb_data:

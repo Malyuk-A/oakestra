@@ -32,16 +32,16 @@ class CustomFormatter(logging.Formatter):
         return formatter.format(record)
 
 
-LOGGER_NAME = "logger"
+_LOGGER_NAME = "logger"
 
-FORMAT = "%(message)s"
+_FORMAT = "%(message)s"
 
-logger = logging.getLogger(LOGGER_NAME)
+logger = logging.getLogger(_LOGGER_NAME)
 logger.setLevel(logging.DEBUG)
 
-formatter = CustomFormatter(FORMAT)
+_formatter = CustomFormatter(_FORMAT)
 
-stream_handler = logging.StreamHandler()
-stream_handler.setFormatter(formatter)
+_stream_handler = logging.StreamHandler()
+_stream_handler.setFormatter(_formatter)
 
-logger.addHandler(stream_handler)
+logger.addHandler(_stream_handler)

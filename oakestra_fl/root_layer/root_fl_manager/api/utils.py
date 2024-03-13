@@ -2,78 +2,79 @@ from http import HTTPStatus
 from typing import Any, NamedTuple, Optional, Tuple
 
 import requests
-from api.common import SYSTEM_MANAGER_URL
+from api.common import HttpMethod
 from api.login import get_login_token
 from utils.logging import logger
 
 
-class ApiQuery(NamedTuple):
+class ApiQueryComponents(NamedTuple):
     url: str
     headers: dict
     data: dict = None
 
 
-def create_api_query(
-    base_url: str, api_endpoint: str, custom_headers: dict = None, data: dict = None
-) -> ApiQuery:
-    url = f"{base_url}{api_endpoint}"
-    headers = custom_headers or {"Authorization": f"Bearer {get_login_token()}"}
-    if data and not custom_headers:
-        headers["Content-Type"] = "application/json"
-    return ApiQuery(url, headers, data)
-
-
-def create_system_manager_api_query(
-    api_endpoint: str, custom_headers: dict = None, data: dict = None
-) -> ApiQuery:
-    return create_api_query(SYSTEM_MANAGER_URL, api_endpoint, custom_headers, data)
-
-
-def send_request(
-    base_url: str, api_endpoint: str = None, error_msg_subject: str = None
-) -> Tuple[HTTPStatus, Optional[Any]]:
+def _prepare_api_query_components(
+    base_url: str, api_endpoint: str = None, custom_headers: dict = None, data: dict = None
+) -> ApiQueryComponents:
     url = base_url
     if api_endpoint is not None:
         url = f"{base_url}{api_endpoint}"
+    headers = custom_headers or {"Authorization": f"Bearer {get_login_token()}"}
+    if data and not custom_headers:
+        headers["Content-Type"] = "application/json"
+    return ApiQueryComponents(url, headers, data)
+
+
+def _create_failure_msg(
+    what_should_happen: str,
+    http_method: HttpMethod,
+    url: str,
+    response_status: HTTPStatus = None,
+) -> str:
+    return (
+        " ".join(
+            (
+                what_should_happen,
+                "request failed with",
+                str(response_status),
+                f"for '{http_method}' '{url}",
+            )
+        ),
+    )
+
+
+def handle_request(
+    base_url: str,
+    what_should_happen: str,
+    http_method: HttpMethod = HttpMethod.GET,
+    api_endpoint: str = None,
+    headers: dict = None,
+    data: dict = None,
+    show_msg_on_success: bool = False,
+    special_msg_on_fail: str = None,
+) -> Tuple[HTTPStatus, Optional[Any]]:
+
+    url, headers, data = _prepare_api_query_components(base_url, api_endpoint, headers, data)
+    args = {
+        "url": url,
+        "verify": False,
+        **({"headers": headers} if headers else {}),
+        **({"data": data} if data else {}),
+    }
 
     try:
-        response = requests.get(url, verify=False)
+        response = http_method.call(**args)
         response_status = HTTPStatus(response.status_code)
         if response_status == HTTPStatus.OK:
+            if show_msg_on_success:
+                logger.info(f"Success: '{what_should_happen}'")
             return response_status, response.json()
         else:
-            return (
-                response_status,
-                f"{error_msg_subject} request failed with '{response_status}' for '{url}",
-            )
+            logger.error(f"FAILED: '{special_msg_on_fail or what_should_happen}'!")
+            logger.error(_create_failure_msg(what_should_happen, http_method, url, response_status))
+            logger.error("response:", response)
+            return response_status, None
     except requests.exceptions.RequestException as e:
-        return (
-            HTTPStatus.INTERNAL_SERVER_ERROR,
-            f"{error_msg_subject} request failed with '{e}' for '{url}",
-        )
-
-
-def send_github_request(api_endpoint: str = None) -> Tuple[HTTPStatus, Optional[Any]]:
-    return send_request("https://api.github.com", api_endpoint, "Github")
-
-
-def check_api_response(
-    response: requests.models.Response,
-    what_should_happen: str,
-    special_msg_on_fail: str = None,
-    hide_msg_on_success: bool = False,
-) -> None:
-    if response.status_code == HTTPStatus:
-        if not hide_msg_on_success:
-            logger.info(f"Success: '{what_should_happen}'")
-    else:
-        logger.error(f"FAILED: '{special_msg_on_fail or what_should_happen}'!")
-        logger.error("response:", response)
-
-
-def check_api_response_quietly(
-    response: requests.models.Response,
-    what_should_happen: str,
-    special_msg_on_fail: str = None,
-) -> None:
-    check_api_response(response, what_should_happen, special_msg_on_fail, hide_msg_on_success=True)
+        logger.error(_create_failure_msg(what_should_happen, http_method, url))
+        logger.error(e)
+        return HTTPStatus.INTERNAL_SERVER_ERROR, None

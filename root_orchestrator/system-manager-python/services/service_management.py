@@ -1,6 +1,7 @@
 import json
 import logging
 
+import paho.mqtt.client as paho_mqtt
 from ext_requests.apps_db import (
     mongo_delete_job,
     mongo_find_app_by_id,
@@ -53,6 +54,14 @@ def create_services_of_app(username, sla, force=False):
                 retain=False,
             )
             print(res)
+            if res.rc == paho_mqtt.MQTTErrorCode.MQTT_ERR_CONN_LOST:
+                print("REEEEEEEEEEEEEEEEEEEEE")
+                res = get_mqtt_client().publish(
+                    topic="new/services",
+                    payload=json.dumps(microservices[i]),
+                    qos=1,
+                    retain=False,
+                )
             print("aa-" * 10)
         except Exception:
             delete_service(username, str(last_service_id))

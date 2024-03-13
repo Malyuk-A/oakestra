@@ -25,7 +25,7 @@ def main() -> None:
     push_image(image_name_with_tag)
 
     # TODO: Add error handling if build fails - should notify RFLM about this
-    # notify_root_fl_manager(mqtt_url, mqtt_port, service_id, image_name_with_tag)
+    notify_root_fl_manager(mqtt_url, mqtt_port, service_id, image_name_with_tag)
 
 
 if __name__ == "__main__":

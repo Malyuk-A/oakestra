@@ -13,11 +13,11 @@ def clone_repo(repo_url: str) -> git.repo.base.Repo:
     return repo
 
 
-def check_conda_env_name() -> None:
+def _check_conda_env_name() -> None:
     run_in_bash(f"sed -i -e 's/name: mlflow-env/name: base/' {CONDA_ENV_FILE_PATH}")
 
 
-def copy_verified_repo_content_into_fl_env() -> None:
+def _copy_verified_repo_content_into_fl_env() -> None:
     for item in CLONED_REPO_PATH.iterdir():
         src = item
         dst = FL_ENV_PATH / item.name
@@ -43,6 +43,6 @@ def check_cloned_repo(cloned_repo: git.repo.base.Repo) -> None:
         else:
             logger.debug(f"{file} found in the repository.")
 
-    check_conda_env_name()
+    _check_conda_env_name()
     handle_dependencies()
-    copy_verified_repo_content_into_fl_env()
+    _copy_verified_repo_content_into_fl_env()
