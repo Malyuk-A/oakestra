@@ -4,7 +4,6 @@ import subprocess
 import sys
 
 import git
-from util.common import FL_ENV_PATH, run_in_bash
 from util.logging import logger
 
 
@@ -33,11 +32,6 @@ def build_repo_specific_fl_client_env_image(image_name_with_tag: str) -> None:
     os.chdir("fl_client_env_image")
     logger.info(f"Start building image: '{image_name_with_tag}'")
     try:
-        # subprocess.check_call(
-        #     shlex.split(
-        #         f"buildah build -f {FL_CLIENT_ENV_IMAGE_DOCKERFILE} -t {image_name_with_tag}"
-        #     )
-        # )
         result = subprocess.run(
             shlex.split(f"buildah build --isolation=chroot -t {image_name_with_tag}"),
             check=False,
@@ -49,8 +43,7 @@ def build_repo_specific_fl_client_env_image(image_name_with_tag: str) -> None:
 
     except Exception as e:
         logger.critical(f"Exception Triggered: '{e}'")
-        sys.exit(27)
-        # raise -> This might be able to kill my docker host farm ............ wtf
+        sys.exit(1)
 
     logger.info(f"Finished building image: '{image_name_with_tag}'")
 

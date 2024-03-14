@@ -3,8 +3,9 @@
 # This buildah version is crucial to be able to run its "build" command.
 FROM python:3.13.0a4-slim-bookworm
 LABEL org.opencontainers.image.source https://github.com/oakestra/oakestra
+WORKDIR /builder_env
 
 RUN apt-get update && apt-get install -y git wget buildah && rm -rf /var/lib/apt/lists/*
 
-COPY . /
+COPY . /builder_env
 RUN pip install -r requirements.txt

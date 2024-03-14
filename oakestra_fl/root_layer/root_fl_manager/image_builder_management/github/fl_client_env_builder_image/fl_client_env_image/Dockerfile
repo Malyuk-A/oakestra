@@ -1,4 +1,6 @@
-FROM docker.io/continuumio/miniconda3:24.1.2-0
+# Docker pull max reached very quickly - thus I use this hack during development.
+# FROM docker.io/continuumio/miniconda3:24.1.2-0
+FROM ghcr.io/malyuk-a/miniconda3:24.1.2-0
 LABEL org.opencontainers.image.source https://github.com/oakestra/oakestra
 
 COPY fl_env fl_env
