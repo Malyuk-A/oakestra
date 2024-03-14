@@ -1,5 +1,5 @@
+import mqtt.main
 from image_registry.common import ROOT_FL_IMAGE_REGISTRY_URL
-from mqtt.main import ROOT_MQTT_BROKER_PORT, ROOT_MQTT_BROKER_URL
 from utils.common import FLOPS_USER_ACCOUNT
 from utils.types import SLA
 
@@ -32,8 +32,8 @@ def generate_builder_sla(
                             repo_url,
                             ROOT_FL_IMAGE_REGISTRY_URL,
                             service_id,
-                            ROOT_MQTT_BROKER_URL,
-                            ROOT_MQTT_BROKER_PORT,
+                            mqtt.main.ROOT_MQTT_BROKER_URL,
+                            mqtt.main.ROOT_MQTT_BROKER_PORT,
                         ],
                         "memory": 2000,
                         "vcpus": 1,

@@ -1,5 +1,6 @@
+import json
 from http import HTTPStatus
-from typing import Any, NamedTuple, Optional, Tuple
+from typing import NamedTuple, Optional, Tuple
 
 import requests
 from api.common import HttpMethod
@@ -52,7 +53,7 @@ def handle_request(
     data: dict = None,
     show_msg_on_success: bool = False,
     special_msg_on_fail: str = None,
-) -> Tuple[HTTPStatus, Optional[Any]]:
+) -> Tuple[HTTPStatus, Optional[dict]]:
 
     url, headers, data = _prepare_api_query_components(base_url, api_endpoint, headers, data)
     args = {
@@ -68,7 +69,10 @@ def handle_request(
         if response_status == HTTPStatus.OK:
             if show_msg_on_success:
                 logger.info(f"Success: '{what_should_happen}'")
-            return response_status, response.json()
+            response = response.json()
+            if isinstance(response, str):
+                response = json.loads(response)
+            return response_status, response
         else:
             logger.error(f"FAILED: '{special_msg_on_fail or what_should_happen}'!")
             logger.error(_create_failure_msg(what_should_happen, http_method, url, response_status))

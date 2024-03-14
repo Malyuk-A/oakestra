@@ -35,12 +35,10 @@ def _reconnect(client):
 
 
 def _on_new_service_message(client, userdata, message):
-    logger.debug("0000000000")
     decoded_message = message.payload.decode()
     logger.debug(f"Received message: {decoded_message}")
     data = json.loads(decoded_message)
     if data["virtualization"] == "ml-repo" and data["code"].startswith(GITHUB_PREFIX):
-        logger.debug("11111111111")
         handle_new_fl_service(data)
 
 
