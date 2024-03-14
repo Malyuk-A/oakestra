@@ -1,11 +1,16 @@
 from http import HTTPStatus
 from typing import List, Optional, Tuple
 
-from image_registry.utils import get_latest_commit_hash, send_reqistry_request
+from api.utils import handle_request
+from image_registry.common import ROOT_FL_IMAGE_REGISTRY_URL
+from image_registry.utils import get_latest_commit_hash
 
 
 def check_registry_reachable() -> HTTPStatus:
-    status, _ = send_reqistry_request()
+    status, _ = handle_request(
+        base_url=ROOT_FL_IMAGE_REGISTRY_URL,
+        what_should_happen="Registry is reachable",
+    )
     return status
 
 
@@ -13,14 +18,22 @@ def check_registry_reachable() -> HTTPStatus:
 # E.g. The (image) repo "alpine" can have multiple tags "latest", "1.0.0", etc.
 # We usually first check the image repo and then its tags.
 def get_current_registry_image_repos() -> Tuple[HTTPStatus, Optional[List[str]]]:
-    status, json_data = send_reqistry_request("/v2/_catalog")
+    status, json_data = handle_request(
+        base_url=ROOT_FL_IMAGE_REGISTRY_URL,
+        api_endpoint="/v2/_catalog",
+        what_should_happen="Get current registry repositories",
+    )
     if status != HTTPStatus.OK:
         return status, None
     return status, json_data["repositories"]
 
 
 def get_current_registry_repo_image_tags(repo_name: str) -> Tuple[HTTPStatus, Optional[List[str]]]:
-    status, json_data = send_reqistry_request(f"/v2/{repo_name}/tags/list")
+    status, json_data = handle_request(
+        base_url=ROOT_FL_IMAGE_REGISTRY_URL,
+        api_endpoint=f"/v2/{repo_name}/tags/list",
+        what_should_happen="Get image tags",
+    )
     if status != HTTPStatus.OK:
         return status, None
     return status, json_data["tags"]

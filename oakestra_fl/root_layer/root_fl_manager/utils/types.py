@@ -1,5 +1,4 @@
 import enum
-from typing import Any
 
 
 class CustomEnum(enum.Enum):
@@ -7,4 +6,4 @@ class CustomEnum(enum.Enum):
         return self.value
 
 
-JSON_SLA = Any
+SLA = dict

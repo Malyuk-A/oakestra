@@ -10,8 +10,7 @@ class HttpMethod(CustomEnum):
     PATCH = "patch"
     DELETE = "delete"
 
-    @classmethod
-    def call(cls, url: str, **kwargs) -> requests.Response:
+    def call(cls, **kwargs) -> requests.Response:
         method_map = {
             cls.GET: requests.get,
             cls.POST: requests.post,
@@ -19,8 +18,9 @@ class HttpMethod(CustomEnum):
             cls.DELETE: requests.delete,
         }
         method = method_map.get(cls)
+
         if method:
-            return method(url, **kwargs)
+            return method(**kwargs)
         else:
             raise ValueError(f"Unsupported HTTP method: {cls.value}")
 

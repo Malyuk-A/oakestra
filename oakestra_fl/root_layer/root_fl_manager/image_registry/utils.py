@@ -1,16 +1,7 @@
 from http import HTTPStatus
-from typing import Any, Optional, Tuple
+from typing import Optional, Tuple
 
 from api.utils import handle_request
-from image_registry.common import ROOT_FL_IMAGE_REGISTRY_URL
-
-
-def send_reqistry_request(api_endpoint: str = None) -> Tuple[HTTPStatus, Optional[Any]]:
-    return handle_request(
-        base_url=ROOT_FL_IMAGE_REGISTRY_URL,
-        api_endpoint=api_endpoint,
-        error_msg_subject="Root Image Registry",
-    )
 
 
 def get_latest_commit_hash(repo_name: str) -> Tuple[HTTPStatus, Optional[str]]:

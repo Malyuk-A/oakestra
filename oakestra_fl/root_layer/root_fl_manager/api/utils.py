@@ -59,7 +59,7 @@ def handle_request(
         "url": url,
         "verify": False,
         **({"headers": headers} if headers else {}),
-        **({"data": data} if data else {}),
+        **({"json": data} if data else {}),
     }
 
     try:

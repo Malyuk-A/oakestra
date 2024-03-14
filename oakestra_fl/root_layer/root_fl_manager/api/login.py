@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
-from api.common import SYSTEM_MANAGER_URL, HttpMethod
-from api.utils import handle_request
+import api.common
+import api.utils
 
 _login_token = ""
 
@@ -14,9 +14,9 @@ def _login_and_set_token() -> str:
     data = {"username": "Admin", "password": "Admin"}
     headers = {"accept": "application/json", "Content-Type": "application/json"}
 
-    status, json_data = handle_request(
-        base_url=SYSTEM_MANAGER_URL,
-        http_method=HttpMethod.Post,
+    status, json_data = api.utils.handle_request(
+        base_url=api.common.SYSTEM_MANAGER_URL,
+        http_method=api.common.HttpMethod.POST,
         api_endpoint="/api/auth/login",
         headers=headers,
         data=data,
@@ -26,7 +26,7 @@ def _login_and_set_token() -> str:
         raise LoginFailed()
 
     global _login_token
-    _login_token = json_data.json()["token"]
+    _login_token = json_data["token"]
     return _login_token
 
 
