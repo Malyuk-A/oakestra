@@ -2,11 +2,12 @@ from http import HTTPStatus
 from typing import Optional, Tuple
 
 from api.utils import handle_request
+from image_builder_management.repo_management import MlRepo
 
 
-def get_latest_commit_hash(repo_name: str) -> Tuple[HTTPStatus, Optional[str]]:
+def get_latest_commit_hash(ml_repo: MlRepo) -> Tuple[HTTPStatus, Optional[str]]:
 
-    core_git_api_endpoint = f"/repos/{repo_name}/commits"
+    core_git_api_endpoint = f"/repos/{ml_repo.name}/commits"
     main_git_api_endpoint = f"{core_git_api_endpoint}/main"
 
     status, json_data = handle_request(

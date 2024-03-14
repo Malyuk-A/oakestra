@@ -1,13 +1,12 @@
 import mqtt.main
+from image_builder_management.repo_management import MlRepo
 from image_registry.common import ROOT_FL_IMAGE_REGISTRY_URL
 from utils.common import FLOPS_USER_ACCOUNT
 from utils.types import SLA
 
 
 def generate_builder_sla(
-    repo_url: str,
-    repo_id: str,
-    latest_short_commit_hash: str,
+    ml_repo: MlRepo,
     service_id: str,
 ) -> SLA:
     return {
@@ -16,7 +15,7 @@ def generate_builder_sla(
         "applications": [
             {
                 "applicationID": "",
-                "application_name": f"{repo_id[0]}{latest_short_commit_hash}",
+                "application_name": f"{str(ml_repo.github_repo.id)[0]}{ml_repo.latest_commit_hash}",
                 "application_namespace": "fl-build",
                 "application_desc": "fl_plugin application for building FL client env images",
                 "microservices": [
@@ -29,7 +28,7 @@ def generate_builder_sla(
                         "cmd": [
                             "python3",
                             "main.py",
-                            repo_url,
+                            ml_repo.url,
                             ROOT_FL_IMAGE_REGISTRY_URL,
                             service_id,
                             mqtt.main.ROOT_MQTT_BROKER_URL,

@@ -1,19 +1,10 @@
-from typing import NamedTuple
-
+from api.common import GITHUB_PREFIX
 from github import Github
 
 
-class RepoDetails(NamedTuple):
-    repo_id: str
-    latest_short_commit_hash: str
-
-
-def get_repo_details(repo_name: str) -> RepoDetails:
-    github_access = Github()
-    repo = github_access.get_repo(repo_name)
-
-    commits = repo.get_commits()
-    latest_commit = commits[0]
-    latest_commit_hash_short = latest_commit.sha[:7]
-
-    return RepoDetails(str(repo.id), latest_commit_hash_short)
+class MlRepo:
+    def __init__(self, repo_url):
+        self.url = repo_url
+        self.name = repo_url.split(GITHUB_PREFIX)[-1]
+        self.github_repo = Github().get_repo(self.name)
+        self.latest_commit_hash = self.github_repo.get_commits()[0].sha[:7]
