@@ -6,6 +6,8 @@ import paho.mqtt.client as paho_mqtt
 from api.common import GITHUB_PREFIX
 from fl_services.main import handle_new_fl_service
 from utils.logging import logger
+from mqtt.enums import Topics
+
 
 ROOT_MQTT_BROKER_URL = os.environ.get("ROOT_MQTT_BROKER_URL")
 ROOT_MQTT_BROKER_PORT = os.environ.get("ROOT_MQTT_BROKER_PORT")
@@ -34,9 +36,21 @@ def _reconnect(client):
     logger.fatal("ROOT MQTT: Reconnect failed after %s attempts. Exiting...", reconnect_count)
 
 
-def _on_new_service_message(client, userdata, message):
+def _on_new_message(client, userdata, message):
     decoded_message = message.payload.decode()
     logger.debug(f"Received message: {decoded_message}")
+    topic = message.topic
+    match topic:
+        # Note: str(Topics.NEW_SERVICES) does not work as expected.
+        case Topics.NEW_SERVICES.value:
+            _on_new_service_message(client, userdata, message, decoded_message)
+        case Topics.IMAGE_BUILDER_SUCCESS.value:
+            logger.info("SUCCESS")
+        case _:
+            logger.error(f"Message received for an unsupported topic '{topic}'")
+
+
+def _on_new_service_message(client, userdata, message, decoded_message):
     data = json.loads(decoded_message)
     if data["virtualization"] == "ml-repo" and data["code"].startswith(GITHUB_PREFIX):
         handle_new_fl_service(data)
@@ -51,7 +65,8 @@ def handle_mqtt():
             _reconnect(client)
 
     mqtt_client.on_disconnect = _on_disconnect
-    mqtt_client.on_message = _on_new_service_message
+    mqtt_client.on_message = _on_new_message
     mqtt_client.connect(ROOT_MQTT_BROKER_URL, int(ROOT_MQTT_BROKER_PORT))
-    mqtt_client.subscribe("new/services")
+    for topic in Topics:
+        mqtt_client.subscribe(str(topic))
     mqtt_client.loop_forever()
