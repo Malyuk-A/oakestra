@@ -4,7 +4,7 @@ import time
 
 import paho.mqtt.client as paho_mqtt
 from api.common import GITHUB_PREFIX
-from fl_services.main import handle_new_fl_service, handle_builder_success
+from fl_services.main import handle_new_fl_service, handle_builder_success, handle_builder_failed
 from utils.logging import logger
 from mqtt.enums import Topics
 

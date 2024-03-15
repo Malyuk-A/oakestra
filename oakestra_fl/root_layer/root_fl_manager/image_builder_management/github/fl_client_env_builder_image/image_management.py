@@ -1,7 +1,6 @@
 import os
 import shlex
 import subprocess
-import sys
 
 from build_context import get_build_context
 from notification_management import notify_about_failed_build_and_terminate

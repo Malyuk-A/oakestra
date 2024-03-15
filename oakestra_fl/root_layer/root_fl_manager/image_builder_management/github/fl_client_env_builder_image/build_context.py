@@ -20,6 +20,9 @@ class BuildContext:
         self.service_id = service_id
         self.builder_app_name = builder_app_name
 
+        self.cloned_repo = None
+        self.new_image_name_with_tag = None
+
         global _build_context
         _build_context = self
 

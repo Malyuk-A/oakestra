@@ -7,7 +7,8 @@ from notification_management import notify_about_failed_build_and_terminate
 from utils.common import CLONED_REPO_PATH, CONDA_ENV_FILE_PATH, FL_ENV_PATH, run_in_bash
 
 
-def clone_repo(repo_url: str) -> None:
+def clone_repo() -> None:
+    repo_url = get_build_context().repo_url
     try:
         repo = git.Repo.clone_from(repo_url, str(CLONED_REPO_PATH))
     except Exception as e:
