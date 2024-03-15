@@ -9,6 +9,3 @@ RUN apt-get update && apt-get install -y git wget buildah && rm -rf /var/lib/apt
 
 COPY . /builder_env
 RUN pip install -r requirements.txt
-
-#TODO remove after testing
-RUN apt-get update && apt-get install -y mosquitto-clients
