@@ -1,7 +1,7 @@
 import argparse
 from typing import NamedTuple
 
-from util.logging import logger
+from utils.logging import logger
 
 
 class ParsedArgs(NamedTuple):

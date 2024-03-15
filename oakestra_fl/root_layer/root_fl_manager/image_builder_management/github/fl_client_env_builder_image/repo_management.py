@@ -4,8 +4,8 @@ import shutil
 
 import git
 from dependency_management.main import handle_dependencies
-from util.common import CLONED_REPO_PATH, CONDA_ENV_FILE_PATH, FL_ENV_PATH, run_in_bash
-from util.logging import logger
+from utils.common import CLONED_REPO_PATH, CONDA_ENV_FILE_PATH, FL_ENV_PATH, run_in_bash
+from utils.logging import logger
 
 
 def clone_repo(repo_url: str) -> git.repo.base.Repo:

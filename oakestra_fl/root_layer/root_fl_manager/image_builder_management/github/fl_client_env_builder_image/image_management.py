@@ -4,7 +4,7 @@ import subprocess
 import sys
 
 import git
-from util.logging import logger
+from utils.logging import logger
 
 
 def prepare_new_image_name_with_tag(

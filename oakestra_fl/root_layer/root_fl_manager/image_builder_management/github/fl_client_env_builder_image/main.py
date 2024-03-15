@@ -5,7 +5,7 @@ from image_management import (
 )
 from mqtt_management import notify_root_fl_manager
 from repo_management import check_cloned_repo, clone_repo
-from util.arg_parsing import parse_args
+from utils.arg_parsing import parse_args
 
 
 def main() -> None:
