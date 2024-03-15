@@ -1,5 +1,5 @@
 import mqtt.main
-from image_builder_management.main import BUILDER_APP_NAMESPACE
+from image_builder_management.common import BUILDER_APP_NAMESPACE
 from image_builder_management.repo_management import MlRepo
 from image_registry.common import ROOT_FL_IMAGE_REGISTRY_URL
 from utils.common import FLOPS_USER_ACCOUNT

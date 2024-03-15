@@ -1,11 +1,10 @@
 from http import HTTPStatus
 
 import api.utils
+from image_builder_management.common import BUILDER_APP_NAMESPACE
 from image_builder_management.repo_management import MlRepo
 from image_builder_management.sla_generator import generate_builder_sla
 from utils.logging import logger
-
-BUILDER_APP_NAMESPACE = "application_namespace"
 
 
 class BuilderAppCreationException(Exception):
@@ -63,7 +62,7 @@ def fetch_builder_app(builder_app_name: str) -> dict:
     status, json_data = api.utils.handle_request(
         base_url=api.common.SYSTEM_MANAGER_URL,
         api_endpoint=f"/api/applications?{query_params}",
-        what_should_happen=f"Delete builder app '{builder_app_name}'",
+        what_should_happen=f"Fetch builder app '{builder_app_name}'",
         show_msg_on_success=True,
     )
     if status != HTTPStatus.OK:
@@ -72,7 +71,8 @@ def fetch_builder_app(builder_app_name: str) -> dict:
 
 
 def undeploy_builder_app(builder_app_name: str) -> None:
-    builder_app = fetch_builder_app(builder_app_name)
+    builder_app = fetch_builder_app(builder_app_name)[0]
+
     builder_app_id = builder_app["applicationID"]
 
     status, _ = api.utils.handle_request(
