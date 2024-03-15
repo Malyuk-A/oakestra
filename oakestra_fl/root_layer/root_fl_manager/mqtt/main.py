@@ -48,6 +48,8 @@ def _on_new_message(client, userdata, message):
                 handle_new_fl_service(data)
         case Topics.IMAGE_BUILDER_SUCCESS.value:
             handle_builder_success(data)
+        case Topics.IMAGE_BUILDER_FAILED.value:
+            handle_builder_failed(data)
         case _:
             logger.error(f"Message received for an unsupported topic '{topic}'")
 

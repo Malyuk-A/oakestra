@@ -1,19 +1,9 @@
 import argparse
-from typing import NamedTuple
 
-from utils.logging import logger
-
-
-class ParsedArgs(NamedTuple):
-    repo_url: str
-    image_registry_url: str
-    service_id: str
-    mqtt_url: str
-    mqtt_port: str
-    builder_app_id: str
+from build_context import BuildContext
 
 
-def parse_args() -> ParsedArgs:
+def parse_args() -> None:
     parser = argparse.ArgumentParser(description="Process GitHub repository and service ID.")
 
     parser.add_argument("repo_url", type=str, help="The URL of the GitHub repository.")
@@ -33,25 +23,11 @@ def parse_args() -> ParsedArgs:
 
     args = parser.parse_args()
 
-    repo_url = args.repo_url
-    image_registry_url = args.image_registry_url
-    service_id = args.service_id
-    mqtt_url = args.mqtt_url
-    mqtt_port = args.mqtt_port
-    builder_app_name = args.builder_app_name
-
-    logger.debug(f"Repo URL: {repo_url}")
-    logger.debug(f"Image Registry URL: {image_registry_url}")
-    logger.debug(f"Service ID: {service_id}")
-    logger.debug(f"MQTT URL: {mqtt_url}")
-    logger.debug(f"MQTT PORT: {mqtt_port}")
-    logger.debug(f"BUILDER APP NAME: {builder_app_name}")
-
-    return ParsedArgs(
-        repo_url,
-        image_registry_url,
-        service_id,
-        mqtt_url,
-        mqtt_port,
-        builder_app_name,
+    BuildContext(
+        args.repo_url,
+        args.image_registry_url,
+        args.service_id,
+        args.mqtt_url,
+        args.mqtt_port,
+        args.builder_app_name,
     )

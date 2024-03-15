@@ -3,31 +3,27 @@ from image_management import (
     prepare_new_image_name_with_tag,
     push_image,
 )
-from mqtt_management import notify_root_fl_manager
+from notification_management import (
+    notify_about_failed_build_and_terminate,
+    notify_about_successful_build,
+)
 from repo_management import check_cloned_repo, clone_repo
 from utils.arg_parsing import parse_args
 
 
 def main() -> None:
-    (
-        repo_url,
-        image_registry_url,
-        service_id,
-        mqtt_url,
-        mqtt_port,
-        builder_app_name,
-    ) = parse_args()
+    parse_args()
+    try:
+        clone_repo()
+        check_cloned_repo()
 
-    cloned_repo = clone_repo(repo_url)
-    check_cloned_repo(cloned_repo)
-    image_name_with_tag = prepare_new_image_name_with_tag(cloned_repo, image_registry_url)
+        prepare_new_image_name_with_tag()
+        build_repo_specific_fl_client_env_image()
+        push_image()
 
-    # TODO uncomment when mqtt is fixed
-    # build_repo_specific_fl_client_env_image(image_name_with_tag)
-    # push_image(image_name_with_tag)
-
-    # TODO: Add error handling if build fails - should notify RFLM about this
-    notify_root_fl_manager(mqtt_url, mqtt_port, service_id, image_name_with_tag, builder_app_name)
+        notify_about_successful_build()
+    except Exception as e:
+        notify_about_failed_build_and_terminate(f"Something unexpected went wrong; '{e}'")
 
 
 if __name__ == "__main__":

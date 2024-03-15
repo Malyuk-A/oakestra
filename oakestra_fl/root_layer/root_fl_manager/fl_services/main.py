@@ -25,9 +25,19 @@ def handle_new_fl_service(new_fl_service: Dict) -> None:
     delegate_image_build(service_id, ml_repo)
 
 
-def handle_builder_success(builder_sucess_msg: Dict) -> None:
-    origin_fl_service_id = builder_sucess_msg["service_id"]
-    image_name_with_tag = builder_sucess_msg["image_name_with_tag"]
-    builder_app_name = builder_sucess_msg["builder_app_name"]
-
+def handle_builder_success(builder_success_msg: Dict) -> None:
+    origin_fl_service_id = builder_success_msg["service_id"]
+    image_name_with_tag = builder_success_msg["image_name_with_tag"]
+    builder_app_name = builder_success_msg["builder_app_name"]
     undeploy_builder_app(builder_app_name)
+    # TODO continue with further FL steps
+
+
+def handle_builder_failed(builder_failed_msg: Dict) -> None:
+    logger.debug("AA")
+    logger.debug(builder_failed_msg)
+
+    builder_app_name = builder_failed_msg["builder_app_name"]
+    undeploy_builder_app(builder_app_name)
+
+    logger.debug("ZZ")
