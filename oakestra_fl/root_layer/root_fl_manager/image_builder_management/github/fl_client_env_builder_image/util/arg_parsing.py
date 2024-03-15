@@ -10,6 +10,7 @@ class ParsedArgs(NamedTuple):
     service_id: str
     mqtt_url: str
     mqtt_port: str
+    builder_app_id: str
 
 
 def parse_args() -> ParsedArgs:
@@ -28,6 +29,7 @@ def parse_args() -> ParsedArgs:
         help="The MQTT URL to be able to notify the FL manager about the image build.",
     )
     parser.add_argument("mqtt_port", type=str)
+    parser.add_argument("builder_app_name", type=str)
 
     args = parser.parse_args()
 
@@ -36,11 +38,20 @@ def parse_args() -> ParsedArgs:
     service_id = args.service_id
     mqtt_url = args.mqtt_url
     mqtt_port = args.mqtt_port
+    builder_app_name = args.builder_app_name
 
     logger.debug(f"Repo URL: {repo_url}")
     logger.debug(f"Image Registry URL: {image_registry_url}")
     logger.debug(f"Service ID: {service_id}")
     logger.debug(f"MQTT URL: {mqtt_url}")
     logger.debug(f"MQTT PORT: {mqtt_port}")
+    logger.debug(f"BUILDER APP NAME: {builder_app_name}")
 
-    return ParsedArgs(repo_url, image_registry_url, service_id, mqtt_url, mqtt_port)
+    return ParsedArgs(
+        repo_url,
+        image_registry_url,
+        service_id,
+        mqtt_url,
+        mqtt_port,
+        builder_app_name,
+    )

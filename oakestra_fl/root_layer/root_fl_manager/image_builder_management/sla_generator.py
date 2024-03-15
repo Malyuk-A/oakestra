@@ -9,13 +9,14 @@ def generate_builder_sla(
     ml_repo: MlRepo,
     service_id: str,
 ) -> SLA:
+    builder_app_name = f"{str(ml_repo.github_repo.id)[0]}{ml_repo.latest_commit_hash}"
     return {
         "sla_version": "v2.0",
         "customerID": FLOPS_USER_ACCOUNT,
         "applications": [
             {
                 "applicationID": "",
-                "application_name": f"{str(ml_repo.github_repo.id)[0]}{ml_repo.latest_commit_hash}",
+                "application_name": builder_app_name,
                 "application_namespace": "fl-build",
                 "application_desc": "fl_plugin application for building FL client env images",
                 "microservices": [
@@ -33,6 +34,7 @@ def generate_builder_sla(
                             service_id,
                             mqtt.main.ROOT_MQTT_BROKER_URL,
                             mqtt.main.ROOT_MQTT_BROKER_PORT,
+                            builder_app_name,
                         ],
                         "memory": 2000,
                         "vcpus": 1,
