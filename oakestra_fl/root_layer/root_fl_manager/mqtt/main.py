@@ -4,7 +4,7 @@ import time
 
 import paho.mqtt.client as paho_mqtt
 from api.common import GITHUB_PREFIX
-from fl_services.main import handle_new_fl_service
+from fl_services.main import handle_new_fl_service, handle_builder_success
 from utils.logging import logger
 from mqtt.enums import Topics
 
@@ -38,22 +38,18 @@ def _reconnect(client):
 
 def _on_new_message(client, userdata, message):
     decoded_message = message.payload.decode()
+    data = json.loads(decoded_message)
     logger.debug(f"Received message: {decoded_message}")
     topic = message.topic
     match topic:
         # Note: str(Topics.NEW_SERVICES) does not work as expected.
         case Topics.NEW_SERVICES.value:
-            _on_new_service_message(client, userdata, message, decoded_message)
+            if data["virtualization"] == "ml-repo" and data["code"].startswith(GITHUB_PREFIX):
+                handle_new_fl_service(data)
         case Topics.IMAGE_BUILDER_SUCCESS.value:
-            logger.info("SUCCESS")
+            handle_builder_success(data)
         case _:
             logger.error(f"Message received for an unsupported topic '{topic}'")
-
-
-def _on_new_service_message(client, userdata, message, decoded_message):
-    data = json.loads(decoded_message)
-    if data["virtualization"] == "ml-repo" and data["code"].startswith(GITHUB_PREFIX):
-        handle_new_fl_service(data)
 
 
 def handle_mqtt():

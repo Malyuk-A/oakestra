@@ -1,6 +1,6 @@
 from blueprints.schema_wrapper import SchemaWrapper
 from bson import json_util
-from ext_requests.apps_db import mongo_get_all_applications
+from ext_requests.apps_db import mongo_find_app_by_name_and_namespace, mongo_get_all_applications
 from ext_requests.user_db import mongo_get_user_by_name
 from flask import request
 from flask.views import MethodView
@@ -13,6 +13,7 @@ from roles.securityUtils import Role, get_jwt_organization, require_role
 # ......................................................#
 from services.application_management import (
     delete_app,
+    get_app_by_name_and_namespace,
     get_user_app,
     register_app,
     update_app,
@@ -54,6 +55,18 @@ class ApplicationController(MethodView):
         try:
             current_user = get_jwt_identity()
             return json_util.dumps(get_user_app(current_user, appid))
+        except Exception as e:
+            return abort(404, {"message": e})
+    
+    @applicationsblp.response(200, SchemaWrapper(sla_schema), content_type="application/json")
+    @jwt_required()
+    def get_by_name_and_namespace(self, *args, **kwargs):
+        try:
+            app_name = request.args.get('app_name')
+            app_namespace = request.args.get('app_namespace')
+            if not app_name or not app_namespace:
+                return abort(400, {"message": "Both app_name and app_namespace are required"})
+            return json_util.dumps(get_app_by_name_and_namespace(app_name, app_namespace))
         except Exception as e:
             return abort(404, {"message": e})
 

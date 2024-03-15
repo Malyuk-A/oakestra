@@ -5,8 +5,14 @@ from image_builder_management.repo_management import MlRepo
 from image_builder_management.sla_generator import generate_builder_sla
 from utils.logging import logger
 
+BUILDER_APP_NAMESPACE = "application_namespace"
+
 
 class BuilderAppCreationException(Exception):
+    pass
+
+
+class BuilderAppDeletionException(Exception):
     pass
 
 
@@ -50,3 +56,31 @@ def delegate_image_build(service_id: str, ml_repo: MlRepo) -> None:
     )
     if status != HTTPStatus.OK:
         raise BuilderServiceDeploymentException()
+
+
+def fetch_builder_app(builder_app_name: str) -> dict:
+    query_params = f"app_name={builder_app_name}&app_namespace={BUILDER_APP_NAMESPACE}"
+    status, json_data = api.utils.handle_request(
+        base_url=api.common.SYSTEM_MANAGER_URL,
+        api_endpoint=f"/api/applications?{query_params}",
+        what_should_happen=f"Delete builder app '{builder_app_name}'",
+        show_msg_on_success=True,
+    )
+    if status != HTTPStatus.OK:
+        raise BuilderAppDeletionException()
+    return json_data
+
+
+def undeploy_builder_app(builder_app_name: str) -> None:
+    builder_app = fetch_builder_app(builder_app_name)
+    builder_app_id = builder_app["applicationID"]
+
+    status, _ = api.utils.handle_request(
+        base_url=api.common.SYSTEM_MANAGER_URL,
+        http_method=api.common.HttpMethod.DELETE,
+        api_endpoint=f"/api/application/{builder_app_id}",
+        what_should_happen=f"Delete builder app '{builder_app_name}'",
+        show_msg_on_success=True,
+    )
+    if status != HTTPStatus.OK:
+        raise BuilderAppDeletionException()
