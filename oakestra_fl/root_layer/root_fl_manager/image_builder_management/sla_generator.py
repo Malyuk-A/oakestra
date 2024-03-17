@@ -40,7 +40,7 @@ def generate_builder_sla(
                         "memory": 2000,
                         "vcpus": 1,
                         "storage": 15000,
-                        "code": "ghcr.io/malyuk-a/fl-client-env-builder:latest",
+                        "code": "ghcr.io/oakestra/plugins/flops/fl-client-env-builder:latest",
                     }
                 ],
             }
