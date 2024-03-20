@@ -158,6 +158,8 @@ func (r *ContainerRuntime) containerCreationRoutine(
 	statusChangeNotificationHandler func(service model.Service),
 ) {
 
+	logger.InfoLogger().Printf("111111111111111111111111111111111111")
+
 	hostname := genTaskID(service.Sname, service.Instance)
 
 	revert := func(err error) {
@@ -196,6 +198,8 @@ func (r *ContainerRuntime) containerCreationRoutine(
 	_ = resolvconfFile.Chmod(444)
 	specOpts = append(specOpts, withCustomResolvConf(resolvconfFile.Name()))
 
+	logger.InfoLogger().Printf("222222222222222222222222222222")
+
 	// create the container
 	container, err := r.contaierClient.NewContainer(
 		ctx,
@@ -209,7 +213,7 @@ func (r *ContainerRuntime) containerCreationRoutine(
 		return
 	}
 
-	logger.InfoLogger().Printf("BBBBBBBBBBBBBBBB")
+	logger.InfoLogger().Printf("333333333333333333333333333333")
 
 	//	start task with /tmp/hostname default log directory
 	file, err := os.OpenFile(fmt.Sprintf("%s/%s", model.GetNodeInfo().LogDirectory, hostname), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
@@ -218,6 +222,9 @@ func (r *ContainerRuntime) containerCreationRoutine(
 		return
 	}
 	defer file.Close()
+
+	logger.InfoLogger().Printf("44444444444444444444444444444")
+
 	task, err := container.NewTask(ctx, cio.NewCreator(cio.WithStreams(nil, file, file)))
 
 	if err != nil {
@@ -239,7 +246,8 @@ func (r *ContainerRuntime) containerCreationRoutine(
 		}
 	}(ctx, task)
 
-	logger.InfoLogger().Printf("CCCCCCCCCCCCCCCC")
+
+	logger.InfoLogger().Printf("555555555555555555555555555555")
 
 	// get wait channel
 	exitStatusC, err := task.Wait(ctx)
@@ -248,6 +256,8 @@ func (r *ContainerRuntime) containerCreationRoutine(
 		revert(err)
 		return
 	}
+
+	logger.InfoLogger().Printf("666666666666666666666666666")
 
 	// if Overlay mode is active then attach network to the task
 	if model.GetNodeInfo().Overlay {
@@ -260,7 +270,7 @@ func (r *ContainerRuntime) containerCreationRoutine(
 		}
 	}
 
-	logger.InfoLogger().Printf("DDDDDDDDDDDDDDDDD")
+	logger.InfoLogger().Printf("7777777777777777777777777777777777")
 
 	// execute the image's task
 	if err := task.Start(ctx); err != nil {
@@ -269,7 +279,7 @@ func (r *ContainerRuntime) containerCreationRoutine(
 		return
 	}
 
-	logger.InfoLogger().Printf("EEEEEEEEEEEEEEEEE")
+	logger.InfoLogger().Printf("8888888888888888888888888888888888")
 
 	// adv startup finished
 	startup <- true
@@ -290,6 +300,8 @@ func (r *ContainerRuntime) containerCreationRoutine(
 		logger.InfoLogger().Printf("Kill channel message received for task %s", task.ID())
 	}
 
+	logger.InfoLogger().Printf("999999999999999999999999999")
+
 	if service.Status != model.SERVICE_COMPLETED {
 		service.Status = model.SERVICE_DEAD
 	}
@@ -300,6 +312,8 @@ func (r *ContainerRuntime) containerCreationRoutine(
 	}
 	statusChangeNotificationHandler(service)
 	r.removeContainer(container)
+
+	logger.InfoLogger().Printf("101010101010101010101010")
 }
 
 func getTotalCpuUsageByPid(pid int32) (float64, error) {

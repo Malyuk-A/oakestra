@@ -88,8 +88,8 @@ services:
       - 3000:3000
 
   dashboard:
-    image: ghcr.io/oakestra/dashboard:latest
-    #image: ghcr.io/oakestra/dashboard:alpha-v0.4.205
+    #image: ghcr.io/oakestra/dashboard:latest
+    image: ghcr.io/oakestra/dashboard:alpha-v0.4.205
     ports:
       - '80:80'
     restart: unless-stopped
