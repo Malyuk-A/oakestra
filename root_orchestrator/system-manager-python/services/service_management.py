@@ -22,6 +22,9 @@ from sla.versioned_sla_parser import parse_sla_json
 
 def create_services_of_app(username, sla, force=False):
 
+    print("3-#" * 10)
+    print(sla)
+
     data = parse_sla_json(sla)
     logging.log(logging.INFO, sla)
     app_id = data.get("applications")[0]["applicationID"]
@@ -88,15 +91,25 @@ def delete_service(username, serviceid):
     return False
 
 
-def update_service(sla, serviceid, username=None):
+def update_service(username, sla, serviceid, replace=None):
     # TODO Check fields and redeploy service
-    if username is None:
-        return mongo_update_job(serviceid, sla), 200
-    else:
-        apps = mongo_get_applications_of_user(username)
-        for application in apps:
-            if serviceid in application["microservices"]:
-                return mongo_update_job(serviceid, sla), 200
+    apps = mongo_get_applications_of_user(username)
+    for application in apps:
+        if serviceid in application["microservices"]:
+            if replace:
+                delete_service(username, serviceid)
+                result, status = create_services_of_app(username, sla)
+                if status != 200:
+                    return {"message": "failed to replace service"}, status
+                updated_service_id = result["job_id"]
+                updated_service = get_service(username, updated_service_id)
+                return updated_service, 200
+
+            job = sla["applications"][0]["microservices"][0]
+            if "_id" in job:
+                del job["_id"]
+            return mongo_update_job(serviceid, sla), 200
+
     return {"message": "service not found"}, 404
 
 
@@ -104,18 +117,14 @@ def user_services(appid, username):
     application = mongo_find_app_by_id(appid, username)
     if application is None:
         return {"message": "app not found"}, 404
-
     return mongo_get_jobs_of_application(appid), 200
 
 
-def get_service(serviceid, username=None):
-    if username is None:
-        return mongo_find_job_by_id(serviceid)
-    else:
-        apps = mongo_get_applications_of_user(username)
-        for application in apps:
-            if serviceid in application["microservices"]:
-                return mongo_find_job_by_id(serviceid)
+def get_service(username, serviceid):
+    apps = mongo_get_applications_of_user(username)
+    for application in apps:
+        if serviceid in application["microservices"]:
+            return mongo_find_job_by_id(serviceid)
 
 
 def get_all_services():

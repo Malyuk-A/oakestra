@@ -37,16 +37,15 @@ class ServiceController(MethodView):
     )
     @jwt_auth_required()
     def get(self, serviceid):
-        # def get(self, serviceid, only_get_services_of_current_user=True):
         """Get service for specific ID"""
 
-        # if only_get_services_of_current_user:
-        #     username = get_jwt_auth_identity()
-        #     job = service_management.get_service(serviceid, username)
-        # else:
-        #     job = service_management.get_service(serviceid)
+        print("zzzzzzzaaaaaaaaaa")
+
         username = get_jwt_auth_identity()
-        job = service_management.get_service(serviceid, username)
+
+        print(username)
+
+        job = service_management.get_service(username, serviceid)
 
         if job is not None:
             return json_util.dumps(job)
@@ -79,13 +78,12 @@ class ServiceController(MethodView):
         """Update service with ID"""
         try:
             username = get_jwt_auth_identity()
-            job = (request.get_json()["applications"][0])["microservices"][0]
-            if "_id" in job:
-                del job["_id"]
-            result, status = service_management.update_service(job, serviceid, username)
+            data = request.get_json()
+            replace = request.args.get("replace")
+            job, status = service_management.update_service(username, data, serviceid, replace)
             if status != 200:
-                abort(status, result)
-            return {}
+                abort(status, job)
+            return json_util.dumps(job)
         except ConnectionError as e:
             abort(404, {"message": e})
 
