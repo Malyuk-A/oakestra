@@ -50,7 +50,9 @@ sla_schema = {
                                     "type": "object",
                                     "properties": {
                                         "rr_ip": {"type": "string"},
+                                        "rr_ip_v6": {"type": "string"},
                                         "closest_ip": {"type": "string"},
+                                        "closest_ip_v6": {"type": "string"},
                                         "instances": {
                                             "type": "array",
                                             "items": {
