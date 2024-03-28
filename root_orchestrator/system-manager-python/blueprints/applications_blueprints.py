@@ -57,13 +57,13 @@ class ApplicationController(MethodView):
             return json_util.dumps(get_user_app(current_user, appid))
         except Exception as e:
             return abort(404, {"message": e})
-    
+
     @applicationsblp.response(200, SchemaWrapper(sla_schema), content_type="application/json")
     @jwt_required()
     def get_by_name_and_namespace(self, *args, **kwargs):
         try:
-            app_name = request.args.get('app_name')
-            app_namespace = request.args.get('app_namespace')
+            app_name = request.args.get("app_name")
+            app_namespace = request.args.get("app_namespace")
             if not app_name or not app_namespace:
                 return abort(400, {"message": "Both app_name and app_namespace are required"})
             return json_util.dumps(get_app_by_name_and_namespace(app_name, app_namespace))

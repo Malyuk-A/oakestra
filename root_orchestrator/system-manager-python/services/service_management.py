@@ -1,7 +1,5 @@
-import json
 import logging
 
-import paho.mqtt.client as paho_mqtt
 from ext_requests.apps_db import (
     mongo_delete_job,
     mongo_find_app_by_id,
@@ -15,7 +13,6 @@ from ext_requests.apps_db import (
     mongo_update_job,
 )
 from ext_requests.net_plugin_requests import net_inform_service_deploy, net_inform_service_undeploy
-from mqtt.main import get_mqtt_client
 from services.instance_management import request_scale_down_instance
 from sla.versioned_sla_parser import parse_sla_json
 

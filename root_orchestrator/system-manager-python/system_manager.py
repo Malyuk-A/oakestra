@@ -5,7 +5,6 @@ from datetime import timedelta
 from pathlib import Path
 from secrets import token_hex
 
-import mqtt.main as root_mqtt
 from blueprints import blueprints
 from bson import json_util
 from ext_requests.cluster_db import mongo_upsert_cluster
