@@ -81,9 +81,9 @@ def all_apps():
 def get_user_app(userid, appid):
     return mongo_find_app_by_id(appid, userid)
 
+
 def get_app_by_name_and_namespace(app_name, app_namespace):
     return mongo_find_app_by_name_and_namespace(app_name, app_namespace)
-    
 
 
 def valid_app_requirements(app):

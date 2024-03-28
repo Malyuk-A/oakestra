@@ -21,10 +21,6 @@ from sla.versioned_sla_parser import parse_sla_json
 
 
 def create_services_of_app(username, sla, force=False):
-
-    print("3-#" * 10)
-    print(sla)
-
     data = parse_sla_json(sla)
     logging.log(logging.INFO, sla)
     app_id = data.get("applications")[0]["applicationID"]
@@ -49,29 +45,11 @@ def create_services_of_app(username, sla, force=False):
         # Inform network plugin about the new service
         try:
             net_inform_service_deploy(service, str(last_service_id))
-            print("AA#" * 10)
-            res = get_mqtt_client().publish(
-                topic="new/services",
-                payload=json.dumps(microservices[i]),
-                qos=1,
-                retain=False,
-            )
-            print(res)
-            if res.rc == paho_mqtt.MQTTErrorCode.MQTT_ERR_CONN_LOST:
-                print("REEEEEEEEEEEEEEEEEEEEE")
-                res = get_mqtt_client().publish(
-                    topic="new/services",
-                    payload=json.dumps(microservices[i]),
-                    qos=1,
-                    retain=False,
-                )
-            print("aa-" * 10)
         except Exception:
             delete_service(username, str(last_service_id))
             return {"message": "failed to deploy service"}, 500
         # TODO: check if service deployed already etc. force=True must force the insertion anyway
 
-    print("Z#" * 10)
     return {"job_id": str(last_service_id)}, 200
 
 

@@ -38,15 +38,8 @@ class ServiceController(MethodView):
     @jwt_auth_required()
     def get(self, serviceid):
         """Get service for specific ID"""
-
-        print("zzzzzzzaaaaaaaaaa")
-
         username = get_jwt_auth_identity()
-
-        print(username)
-
         job = service_management.get_service(username, serviceid)
-
         if job is not None:
             return json_util.dumps(job)
         else:

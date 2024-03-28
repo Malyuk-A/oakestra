@@ -29,13 +29,6 @@ ALLOWED_EXTENSIONS = {"txt", "json", "yml"}
 
 app = Flask(__name__)
 
-app.logger.info("T#" * 10)
-
-
-root_mqtt.init_mqtt()
-app.logger.info("Zz#" * 10)
-
-
 app.config["OPENAPI_VERSION"] = "3.0.2"
 app.config["API_TITLE"] = "Oakestra root api"
 app.config["API_VERSION"] = "v1"
