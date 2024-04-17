@@ -50,11 +50,11 @@ func (r *ContainerRuntime) AlexTesting() {
 
 	var image containerd.Image
 	// pull the given image
-	sysimg, err := r.contaierClient.ImageService().Get(r.ctx, test_image)
+	sysimg, err := r.containerClient.ImageService().Get(r.ctx, test_image)
 	logger.InfoLogger().Printf("2222222222222222222222222")
 	if err == nil {
 		logger.InfoLogger().Printf("2aaaaaaaaaaaaaaaaaaa")
-		image = containerd.NewImage(r.contaierClient, sysimg)
+		image = containerd.NewImage(r.containerClient, sysimg)
 	} else {
 		logger.InfoLogger().Printf("2bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
 		logger.InfoLogger().Printf("Error retrieving the image: %v \n Trying to pull the image online.", err)
@@ -62,7 +62,7 @@ func (r *ContainerRuntime) AlexTesting() {
 		logger.ErrorLogger().Printf("Error retrieving the image: %v \n Trying to pull the image online.", err)
 
 		logger.InfoLogger().Printf("2b1111111111111111111111")
-		image, err = r.contaierClient.Pull(r.ctx, test_image, containerd.WithPullUnpack)
+		image, err = r.containerClient.Pull(r.ctx, test_image, containerd.WithPullUnpack)
 		logger.InfoLogger().Printf("2b22222222222222222222222")
 		if err != nil {
 			logger.InfoLogger().Printf("2bAAAAAAAAAAAAAA")

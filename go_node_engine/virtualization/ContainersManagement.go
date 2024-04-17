@@ -21,6 +21,8 @@ import (
 	"github.com/containerd/containerd/contrib/nvidia"
 	"github.com/containerd/containerd/namespaces"
 	"github.com/containerd/containerd/oci"
+
+	docker_remote "github.com/containerd/containerd/remotes/docker"
 	"github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/shirou/gopsutil/docker"
 	"github.com/shirou/gopsutil/process"
@@ -28,7 +30,7 @@ import (
 )
 
 type ContainerRuntime struct {
-	contaierClient *containerd.Client
+	containerClient *containerd.Client
 	killQueue      map[string]*chan bool
 	channelLock    *sync.RWMutex
 	ctx            context.Context
@@ -45,13 +47,91 @@ const NAMESPACE = "oakestra"
 const CGROUPV1_BASE_MEM = "/sys/fs/cgroup/memory/" + NAMESPACE
 const CGROUPV2_BASE_MEM = "/sys/fs/cgroup/" + NAMESPACE
 
+
+
+//func transferImage(ctx context.Context, client *containerd.Client, imageRef string, usePlainHTTP bool) error {
+//func NewHTTPRegistry(ref string, headers http.Header, creds CredentialHelper) *registry.OCIRegistry {
+// func NewHTTPRegistry(ref string, headers http.Header) *registry.OCIRegistry {
+
+// 	// Create an authorizer
+// 	var aopts []docker_remote.AuthorizerOpt
+// 	// aopts = append(aopts, docker_remote.WithAuthCreds(func(host string) (string, string, error) {
+// 	// 	c, err := creds.GetCredentials(context.Background(), ref, host)
+// 	// 	if err != nil {
+// 	// 		return "", "", err
+// 	// 	}
+// 	// 	return c.Username, c.Secret, nil
+// 	// }))
+
+// 	// Function to always return true for plain HTTP
+// 	alwaysPlainHTTP := func(string) (bool, error) {
+//         return true, nil
+//     }
+
+// 	ropts := []docker_remote.RegistryOpt{
+// 		docker_remote.WithAuthorizer(docker_remote.NewDockerAuthorizer(aopts...)),
+// 		docker_remote.WithPlainHTTP(alwaysPlainHTTP),
+// 	}
+
+// 	resolver := docker_remote.NewResolver(docker_remote.ResolverOptions{
+// 		Hosts:   docker_remote.ConfigureDefaultRegistries(ropts...),
+// 		// Headers: headers,
+// 	})
+
+// 	return &registry.OCIRegistry{
+// 		reference: ref,
+// 		headers:   headers,
+// 		creds:     creds,
+// 		resolver:  resolver,
+// 	}
+
+
+
+
+// 	// // Create a new context with the namespace
+// 	// ctx = namespaces.WithNamespace(ctx, "default")
+
+// 	// // Configure the registry options
+// 	// opts := []registry.Opt{
+// 	// 	registry.WithCredentials(docker_remote.NewResolver(docker_remote.ResolverOptions{})),
+// 	// 	registry.WithHostDir("/path/to/your/hosts/dir"), // Adjust the path as necessary
+// 	// }
+// 	// if usePlainHTTP {
+// 	// 	opts = append(opts, registry.WithDefaultScheme("http"))
+// 	// }
+
+// 	// // Create a new OCI registry instance
+// 	// reg, err := registry.NewOCIRegistry(ctx, imageRef, opts...)
+// 	// if err != nil {
+// 	// 	return fmt.Errorf("failed to create OCI registry: %w", err)
+// 	// }
+
+// 	// // Create a new image store
+// 	// is, err := client.ImageService().GetStore(ctx)
+// 	// if err != nil {
+// 	// 	return fmt.Errorf("failed to get image store: %w", err)
+// 	// }
+
+// 	// // Set up progress handler
+// 	// pf, done := transfer.ProgressHandler(ctx, os.Stdout)
+// 	// defer done()
+
+// 	// // Perform the transfer
+// 	// if err := client.Transfer(ctx, reg, is, transfer.WithProgress(pf)); err != nil {
+// 	// 	return fmt.Errorf("failed to transfer image: %w", err)
+// 	// }
+
+// 	return nil
+// }
+
+
 func GetContainerdClient() *ContainerRuntime {
 	containerdSingletonCLient.Do(func() {
 		client, err := containerd.New("/run/containerd/containerd.sock")
 		if err != nil {
 			logger.ErrorLogger().Fatalf("Unable to start the container engine: %v\n", err)
 		}
-		runtime.contaierClient = client
+		runtime.containerClient = client
 		runtime.killQueue = make(map[string]*chan bool)
 		runtime.ctx = namespaces.WithNamespace(context.Background(), NAMESPACE)
 		runtime.forceContainerCleanup()
@@ -71,24 +151,40 @@ func (r *ContainerRuntime) StopContainerdClient() {
 			logger.ErrorLogger().Printf("Unable to undeploy %s, error: %v", taskid.String(), err)
 		}
 	}
-	r.contaierClient.Close()
+	r.containerClient.Close()
 }
 
 func (r *ContainerRuntime) Deploy(service model.Service, statusChangeNotificationHandler func(service model.Service)) error {
 
 	var image containerd.Image
 	// pull the given image
-	sysimg, err := r.contaierClient.ImageService().Get(r.ctx, service.Image)
+	sysimg, err := r.containerClient.ImageService().Get(r.ctx, service.Image)
 	if err == nil {
-		image = containerd.NewImage(r.contaierClient, sysimg)
+		image = containerd.NewImage(r.containerClient, sysimg)
 	} else {
 		logger.InfoLogger().Printf("Error retrieving the image: %v \n Trying to pull the image online.", err)
-
-		logger.ErrorLogger().Printf("Error retrieving the image: %v \n Trying to pull the image online.", err)
-
-		image, err = r.contaierClient.Pull(r.ctx, service.Image, containerd.WithPullUnpack)
+		image, err = r.containerClient.Pull(r.ctx, service.Image, containerd.WithPullUnpack)
 		if err != nil {
-			return err
+			logger.InfoLogger().Printf("ALEX DEBUG service.Image: %v", service.Image)
+			logger.InfoLogger().Printf("ALEX DEBUG err: %v", err)
+
+			if strings.Contains(err.Error(), "http: server gave HTTP response to HTTPS client") {
+				alwaysPlainHTTP := func(string) (bool, error) {
+					return true, nil
+				}
+				ropts := []docker_remote.RegistryOpt{
+					docker_remote.WithPlainHTTP(alwaysPlainHTTP),
+				}
+				resolver := docker_remote.NewResolver(docker_remote.ResolverOptions{
+					Hosts:   docker_remote.ConfigureDefaultRegistries(ropts...),
+				})
+				image, err = r.containerClient.Pull(r.ctx, service.Image, containerd.WithPullUnpack, containerd.WithResolver(resolver))
+				if err != nil {
+					return err
+				}
+			} else {
+				return err
+			}
 		}
 	}
 
@@ -201,7 +297,7 @@ func (r *ContainerRuntime) containerCreationRoutine(
 	logger.InfoLogger().Printf("222222222222222222222222222222")
 
 	// create the container
-	container, err := r.contaierClient.NewContainer(
+	container, err := r.containerClient.NewContainer(
 		ctx,
 		hostname,
 		containerd.WithImage(image),
@@ -287,7 +383,12 @@ func (r *ContainerRuntime) containerCreationRoutine(
 	// wait for manual task kill or task finish
 	select {
 	case exitStatus := <-exitStatusC:
+		logger.InfoLogger().Printf("AAAAAAAAAAAAA")
+		logger.InfoLogger().Printf(strconv.FormatUint(uint64(exitStatus.ExitCode()), 10))
+		logger.InfoLogger().Printf("aaaaaaaaaaaaa")
+
 		if exitStatus.ExitCode() == 0 && service.OneShot {
+			logger.InfoLogger().Printf("BBBBBBBBBBB")
 			service.Status = model.SERVICE_COMPLETED		
 		}
 		//TODO: container exited, do something, notify to cluster manager
@@ -302,7 +403,11 @@ func (r *ContainerRuntime) containerCreationRoutine(
 
 	logger.InfoLogger().Printf("999999999999999999999999999")
 
+	logger.InfoLogger().Printf("CCCCCCCCCCCCCC")
+	logger.InfoLogger().Printf(service.Status)
+	logger.InfoLogger().Printf("cccccccccccccc")
 	if service.Status != model.SERVICE_COMPLETED {
+		logger.InfoLogger().Printf("DDDDDDDDDDD")
 		service.Status = model.SERVICE_DEAD
 	}
 
@@ -346,7 +451,7 @@ func (r *ContainerRuntime) ResourceMonitoring(every time.Duration, notifyHandler
 		for true {
 			select {
 			case <-time.After(every):
-				deployedContainers, err := r.contaierClient.Containers(r.ctx)
+				deployedContainers, err := r.containerClient.Containers(r.ctx)
 				if err != nil {
 					logger.ErrorLogger().Printf("Unable to fetch running containers: %v", err)
 				}
@@ -381,7 +486,7 @@ func (r *ContainerRuntime) ResourceMonitoring(every time.Duration, notifyHandler
 						logger.ErrorLogger().Printf("Unable to fetch container metadata: %v", err)
 						continue
 					}
-					currentsnapshotter := r.contaierClient.SnapshotService(containerd.DefaultSnapshotter)
+					currentsnapshotter := r.containerClient.SnapshotService(containerd.DefaultSnapshotter)
 					usage, err := currentsnapshotter.Usage(r.ctx, containerMetadata.SnapshotKey)
 					if err != nil {
 						logger.ErrorLogger().Printf("Unable to fetch task disk usage: %v", err)
@@ -406,7 +511,7 @@ func (r *ContainerRuntime) ResourceMonitoring(every time.Duration, notifyHandler
 }
 
 func (r *ContainerRuntime) forceContainerCleanup() {
-	deployedContainers, err := r.contaierClient.Containers(r.ctx)
+	deployedContainers, err := r.containerClient.Containers(r.ctx)
 	if err != nil {
 		logger.ErrorLogger().Printf("Unable to fetch running containers: %v", err)
 	}

@@ -58,18 +58,6 @@ class ApplicationController(MethodView):
         except Exception as e:
             return abort(404, {"message": e})
 
-    @applicationsblp.response(200, SchemaWrapper(sla_schema), content_type="application/json")
-    @jwt_required()
-    def get_by_name_and_namespace(self, *args, **kwargs):
-        try:
-            app_name = request.args.get("app_name")
-            app_namespace = request.args.get("app_namespace")
-            if not app_name or not app_namespace:
-                return abort(400, {"message": "Both app_name and app_namespace are required"})
-            return json_util.dumps(get_app_by_name_and_namespace(app_name, app_namespace))
-        except Exception as e:
-            return abort(404, {"message": e})
-
     @jwt_required()
     def delete(self, appid, *args, **kwargs):
         try:
@@ -92,6 +80,16 @@ class ApplicationController(MethodView):
         except ConnectionError as e:
             abort(404, {"message": e})
 
+@applicationblp.route("/<appnamespace>/<appname>")
+class AlternativeApplicationController(Resource):
+    @applicationsblp.response(200, SchemaWrapper(sla_schema), content_type="application/json")
+    @jwt_required()
+    def get(self, appnamespace, appname, *args, **kwargs):
+        try:
+            return json_util.dumps(get_app_by_name_and_namespace(appname, appnamespace))
+        except Exception as e:
+            return abort(404, {"message": e})
+
 
 @applicationblp.route("/")
 class CreateApplicationController(Resource):
@@ -101,6 +99,9 @@ class CreateApplicationController(Resource):
     )
     @jwt_required()
     def post(self, *args, **kwargs):
+        
+        print("Hello World")
+        
         data = request.get_json()
         current_user = get_jwt_identity()
         result, code = register_app(data, current_user)
