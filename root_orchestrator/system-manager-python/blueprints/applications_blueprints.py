@@ -99,9 +99,6 @@ class CreateApplicationController(Resource):
     )
     @jwt_required()
     def post(self, *args, **kwargs):
-        
-        print("Hello World")
-        
         data = request.get_json()
         current_user = get_jwt_identity()
         result, code = register_app(data, current_user)

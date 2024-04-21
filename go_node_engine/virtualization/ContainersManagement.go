@@ -47,84 +47,6 @@ const NAMESPACE = "oakestra"
 const CGROUPV1_BASE_MEM = "/sys/fs/cgroup/memory/" + NAMESPACE
 const CGROUPV2_BASE_MEM = "/sys/fs/cgroup/" + NAMESPACE
 
-
-
-//func transferImage(ctx context.Context, client *containerd.Client, imageRef string, usePlainHTTP bool) error {
-//func NewHTTPRegistry(ref string, headers http.Header, creds CredentialHelper) *registry.OCIRegistry {
-// func NewHTTPRegistry(ref string, headers http.Header) *registry.OCIRegistry {
-
-// 	// Create an authorizer
-// 	var aopts []docker_remote.AuthorizerOpt
-// 	// aopts = append(aopts, docker_remote.WithAuthCreds(func(host string) (string, string, error) {
-// 	// 	c, err := creds.GetCredentials(context.Background(), ref, host)
-// 	// 	if err != nil {
-// 	// 		return "", "", err
-// 	// 	}
-// 	// 	return c.Username, c.Secret, nil
-// 	// }))
-
-// 	// Function to always return true for plain HTTP
-// 	alwaysPlainHTTP := func(string) (bool, error) {
-//         return true, nil
-//     }
-
-// 	ropts := []docker_remote.RegistryOpt{
-// 		docker_remote.WithAuthorizer(docker_remote.NewDockerAuthorizer(aopts...)),
-// 		docker_remote.WithPlainHTTP(alwaysPlainHTTP),
-// 	}
-
-// 	resolver := docker_remote.NewResolver(docker_remote.ResolverOptions{
-// 		Hosts:   docker_remote.ConfigureDefaultRegistries(ropts...),
-// 		// Headers: headers,
-// 	})
-
-// 	return &registry.OCIRegistry{
-// 		reference: ref,
-// 		headers:   headers,
-// 		creds:     creds,
-// 		resolver:  resolver,
-// 	}
-
-
-
-
-// 	// // Create a new context with the namespace
-// 	// ctx = namespaces.WithNamespace(ctx, "default")
-
-// 	// // Configure the registry options
-// 	// opts := []registry.Opt{
-// 	// 	registry.WithCredentials(docker_remote.NewResolver(docker_remote.ResolverOptions{})),
-// 	// 	registry.WithHostDir("/path/to/your/hosts/dir"), // Adjust the path as necessary
-// 	// }
-// 	// if usePlainHTTP {
-// 	// 	opts = append(opts, registry.WithDefaultScheme("http"))
-// 	// }
-
-// 	// // Create a new OCI registry instance
-// 	// reg, err := registry.NewOCIRegistry(ctx, imageRef, opts...)
-// 	// if err != nil {
-// 	// 	return fmt.Errorf("failed to create OCI registry: %w", err)
-// 	// }
-
-// 	// // Create a new image store
-// 	// is, err := client.ImageService().GetStore(ctx)
-// 	// if err != nil {
-// 	// 	return fmt.Errorf("failed to get image store: %w", err)
-// 	// }
-
-// 	// // Set up progress handler
-// 	// pf, done := transfer.ProgressHandler(ctx, os.Stdout)
-// 	// defer done()
-
-// 	// // Perform the transfer
-// 	// if err := client.Transfer(ctx, reg, is, transfer.WithProgress(pf)); err != nil {
-// 	// 	return fmt.Errorf("failed to transfer image: %w", err)
-// 	// }
-
-// 	return nil
-// }
-
-
 func GetContainerdClient() *ContainerRuntime {
 	containerdSingletonCLient.Do(func() {
 		client, err := containerd.New("/run/containerd/containerd.sock")
@@ -165,9 +87,6 @@ func (r *ContainerRuntime) Deploy(service model.Service, statusChangeNotificatio
 		logger.InfoLogger().Printf("Error retrieving the image: %v \n Trying to pull the image online.", err)
 		image, err = r.containerClient.Pull(r.ctx, service.Image, containerd.WithPullUnpack)
 		if err != nil {
-			logger.InfoLogger().Printf("ALEX DEBUG service.Image: %v", service.Image)
-			logger.InfoLogger().Printf("ALEX DEBUG err: %v", err)
-
 			if strings.Contains(err.Error(), "http: server gave HTTP response to HTTPS client") {
 				alwaysPlainHTTP := func(string) (bool, error) {
 					return true, nil
