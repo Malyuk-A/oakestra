@@ -85,17 +85,6 @@ class ApplicationController(MethodView):
             abort(404, {"message": e})
 
 
-@applicationblp.route("/<appnamespace>/<appname>")
-class AlternativeApplicationController(Resource):
-    @applicationsblp.response(200, SchemaWrapper(sla_schema), content_type="application/json")
-    @jwt_required()
-    def get(self, appnamespace, appname, *args, **kwargs):
-        try:
-            return json_util.dumps(get_app_by_name_and_namespace(appname, appnamespace))
-        except Exception as e:
-            return abort(404, {"message": e})
-
-
 @applicationblp.route("/")
 class CreateApplicationController(Resource):
     @applicationblp.arguments(schema=sla_schema, location="json", validate=False, unknown=True)

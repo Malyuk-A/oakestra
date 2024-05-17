@@ -37,7 +37,11 @@ class ServiceController(MethodView):
     )
     @jwt_auth_required()
     def get(self, serviceid):
-        """Get service for specific ID"""
+        """Get service for specific ID
+
+        Requires user to own the service
+        ---
+        """
         username = get_jwt_auth_identity()
         job = service_management.get_service(serviceid, username)
 
