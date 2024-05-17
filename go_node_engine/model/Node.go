@@ -50,7 +50,7 @@ type Node struct {
 	GpuMemUsage    float64           `json:"gpu_mem_used"`
 	GpuTotMem      float64           `json:"gpu_tot_mem"`
 	Technology     []RuntimeType     `json:"technology"`
-	Extensions	   []ExtensionType   `json:"extensions"`
+	Extensions     []ExtensionType   `json:"extensions"`
 	Overlay        bool
 	LogDirectory   string
 	NetManagerPort int

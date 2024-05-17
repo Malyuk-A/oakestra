@@ -71,15 +71,20 @@ class ServiceController(MethodView):
     @serviceblp.response(200, content_type="application/json")
     @jwt_auth_required()
     def put(self, *args, serviceid):
-        """Update service with ID"""
+        """Update service with ID
+
+        Requires user to own the service
+        ---
+        """
         try:
             username = get_jwt_auth_identity()
-            data = request.get_json()
-            replace = request.args.get("replace")
-            job, status = service_management.update_service(username, data, serviceid, replace)
+            job = (request.get_json()["applications"][0])["microservices"][0]
+            if "_id" in job:
+                del job["_id"]
+            result, status = service_management.update_service(username, job, serviceid)
             if status != 200:
-                abort(status, job)
-            return json_util.dumps(job)
+                abort(status, result)
+            return {}
         except ConnectionError as e:
             abort(404, {"message": e})
 
