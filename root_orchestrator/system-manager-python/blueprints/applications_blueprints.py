@@ -13,7 +13,6 @@ from roles.securityUtils import Role, get_jwt_organization, require_role
 from services.application_management import (
     delete_app,
     get_all_applications,
-    get_app_by_name_and_namespace,
     get_user_app,
     get_user_apps,
     register_app,
