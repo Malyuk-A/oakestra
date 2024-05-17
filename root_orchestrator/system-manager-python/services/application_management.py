@@ -94,10 +94,6 @@ def get_user_app(userid, appid):
     return app, 200
 
 
-def get_app_by_name_and_namespace(app_name, app_namespace):
-    return mongo_find_app_by_name_and_namespace(app_name, app_namespace)
-
-
 def valid_app_requirements(app):
     if len(app["application_name"]) > 10 or len(app["application_name"]) < 1:
         return False

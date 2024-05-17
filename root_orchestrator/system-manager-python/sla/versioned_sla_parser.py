@@ -14,10 +14,10 @@ class SLAFormatError(BaseException):
 
 def parse_sla_json(sla):
     json_data = sla
-    
+
     if not isinstance(sla, dict):
         json_data = json.loads(sla)
-        
+
     version = json_data["sla_version"]
     validator = sla_validator_by_version[version]
     validation_result = validator(json_data)

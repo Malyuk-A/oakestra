@@ -1,6 +1,5 @@
 from blueprints.schema_wrapper import SchemaWrapper
 from bson import json_util
-from ext_requests.apps_db import mongo_find_app_by_name_and_namespace, mongo_get_all_applications
 from ext_requests.user_db import mongo_get_user_by_name
 from flask import request
 from flask.views import MethodView
