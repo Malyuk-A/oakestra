@@ -3,12 +3,13 @@ package mqtt
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/eclipse/paho.mqtt.golang"
 	"go_node_engine/logger"
 	"go_node_engine/model"
 	"go_node_engine/virtualization"
 	"strings"
 	"time"
+
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
 var TOPICS = make(map[string]mqtt.MessageHandler)
@@ -85,7 +86,7 @@ func runMqttClient(opts *mqtt.ClientOptions) {
 }
 
 func publishToBroker(topic string, payload string) {
-	logger.InfoLogger().Printf("MQTT - publish to - %s - the payload - %s", topic, payload)
+	// logger.InfoLogger().Printf("MQTT - publish to - %s - the payload - %s", topic, payload)
 	token := mainMqttClient.Publish(fmt.Sprintf("nodes/%s/%s", clientID, topic), 1, false, payload)
 	if token.WaitTimeout(time.Second*5) && token.Error() != nil {
 		logger.ErrorLogger().Printf("ERROR: MQTT PUBLISH: %s", token.Error())

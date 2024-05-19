@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"go_node_engine/extensions/flops"
 	"go_node_engine/jobs"
 	"go_node_engine/logger"
 	"go_node_engine/model"
@@ -25,7 +26,7 @@ const MONITORING_CYCLE = time.Second * 2
 
 func main() {
 
-	logger.InfoLogger().Printf("AAAAAAAAAAAAAAAAAAAAAA")
+	logger.InfoLogger().Printf("AAAREeezzzzz")
 
 	flag.Parse()
 
@@ -43,6 +44,7 @@ func main() {
 
 	if *FederatedLearningSupport {
 		model.GetNodeInfo().AddEnabledExtensions(model.FEDERATED_LEARNING)
+		flops.HandleFLOpsDataManager()
 	}
 
 	//hadshake with the cluster orchestrator to get mqtt port and node id
