@@ -34,7 +34,7 @@ func HandleFLOpsDataManager() {
 			logger.ErrorLogger().Fatalf("Error pulling FLOps Data Manager image: %v\n", err)
 			return
 		}
-		cmd = exec.Command("docker", "run", "--rm", "-d", "-p", "11027:11027", "-v", "flops_data_volume:/flops_data_volume" ,"--name=flops_data_manager", data_manager_image)
+		cmd = exec.Command("docker", "run", "--rm", "-d", "-p", "11027:11027", "-v", "flops_data_manager_sidecar_volume:/flops_data_manager_sidecar_volume" ,"--name=flops_data_manager", data_manager_image)
 		err = cmd.Run()
 		if err!= nil {
 			logger.ErrorLogger().Fatalf("Error running container: %v\n", err)
