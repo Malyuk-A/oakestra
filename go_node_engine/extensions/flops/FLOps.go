@@ -7,8 +7,8 @@ import (
 )
 
 func HandleFLOpsDataManager() {
-	data_manager_sidecar_image := "ghcr.io/malyuk-a/flops-data-manager-sidecar:latest"
-	container_name := "flops_data_manager_sidecar"
+	ml_data_server_image := "ghcr.io/malyuk-a/ml-data-server:latest"
+	container_name := "ml_data_server"
 
 	cmd := exec.Command("docker", "ps", "-a", "--format", "{{.Names}}")
     output, err := cmd.Output()
@@ -28,14 +28,17 @@ func HandleFLOpsDataManager() {
     }
 
 	if !containerExists {
-		cmd := exec.Command("docker", "pull", data_manager_sidecar_image)
+		cmd := exec.Command("docker", "pull", ml_data_server_image)
 		err := cmd.Run()
+
 		if err!= nil {
 			logger.ErrorLogger().Fatalf("Error pulling FLOps Data Manager image: %v\n", err)
 			return
 		}
-		cmd = exec.Command("docker", "run", "--rm", "-d", "-p", "11027:11027", "-v", "flops_data_manager_sidecar_volume:/flops_data_manager_sidecar_volume" ,"--name=flops_data_manager_sidecar", data_manager_sidecar_image)
+
+		cmd = exec.Command("docker", "run", "--rm", "-d", "-p", "11027:11027", "-v", "ml_data_server_volume:/ml_data_server_volume", "--name=ml_data_server", ml_data_server_image)
 		err = cmd.Run()
+
 		if err!= nil {
 			logger.ErrorLogger().Fatalf("Error running container: %v\n", err)
 			return
