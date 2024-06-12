@@ -1,5 +1,6 @@
 import logging
 
+from icecream import ic
 from mongodb_client import mongo_find_all_active_nodes
 
 
@@ -9,6 +10,9 @@ def calculate(app, job):
 
     # check here if job has any user preferences, e.g. on a specific node, cpu architecture,
     constraints = job.get("constraints")
+
+    print("CCCCCC", ic.format("DDDD", constraints))
+
     if constraints is not None:
         return constraint_based_scheduling(job, constraints)
     else:
@@ -16,12 +20,22 @@ def calculate(app, job):
 
 
 def constraint_based_scheduling(job, constraints):
-    mongo_find_all_active_nodes()
+    filtered_active_nodes = []
     for constraint in constraints:
         constraint_type = constraint.get("type")
         if constraint_type == "direct":
             return deploy_on_best_among_desired_nodes(job, constraint.get("node"))
-    return greedy_load_balanced_algorithm(job=job)
+        if constraint_type == "extensions":
+            for node in mongo_find_all_active_nodes():
+                node_info = node["node_info"]
+                if (
+                    node_info.get("extensions")
+                    and constraint.get("needs")
+                    and set(constraint.get("needs")).issubset(set(node_info.get("extensions")))
+                ):
+                    filtered_active_nodes.append(node)
+
+    return greedy_load_balanced_algorithm(job=job, active_nodes=filtered_active_nodes)
 
 
 def first_fit_algorithm(job):
@@ -98,6 +112,9 @@ def replicate(job):
 
 
 def extract_specs(node):
+
+    print("BBBBBBB", ic.format("AAAAAAAAAAAAAA", node))
+
     return {
         "available_cpu": node.get("current_cpu_cores_free", 0)
         * (100 - node.get("current_memory_percent"))

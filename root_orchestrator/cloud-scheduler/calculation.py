@@ -1,3 +1,4 @@
+from icecream import ic
 from resource_abstractor_client import cluster_operations
 
 
@@ -12,6 +13,7 @@ def calculate(job_id, job):
 
 
 def constraint_based_scheduling(job, constraints):
+    print(ic.format("AAAAAAAAAAAAAAAAAA", list(cluster_operations.get_resources(active=True))))
     for constraint in constraints:
         constraint_type = constraint.get("type")
         if constraint_type == "direct":
@@ -56,18 +58,6 @@ def greedy_load_balanced_algorithm(job, active_clusters=None):
     if active_clusters is None:
         active_clusters = cluster_operations.get_resources(active=True) or []
     qualified_clusters = []
-
-    # memory = 0
-    # if job.get("memory"):
-    #     memory = job.get("memory")
-
-    # vcpu = 0
-    # if job.get("vcpu"):
-    #     vcpu = job.get("vcpu")
-
-    # vgpu = 0
-    # if job.get("vgpu"):
-    #     vgpu = job.get("vgpu")
 
     for cluster in active_clusters:
         if does_cluster_respects_requirements(cluster, job):
