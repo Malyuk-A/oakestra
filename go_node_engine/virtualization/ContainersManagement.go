@@ -210,9 +210,6 @@ func (r *ContainerRuntime) containerCreationRoutine(
 	defer resolvconfFile.Close()
 	_ = resolvconfFile.Chmod(444)
 	specOpts = append(specOpts, withCustomResolvConf(resolvconfFile.Name()))
-
-	logger.InfoLogger().Printf("222222222222222222222222222222")
-
 	// create the container
 	container, err := r.containerClient.NewContainer(
 		ctx,
@@ -225,9 +222,6 @@ func (r *ContainerRuntime) containerCreationRoutine(
 		revert(err)
 		return
 	}
-
-	logger.InfoLogger().Printf("333333333333333333333333333333")
-
 	//	start task with /tmp/hostname default log directory
 	file, err := os.OpenFile(fmt.Sprintf("%s/%s", model.GetNodeInfo().LogDirectory, taskid), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
@@ -257,9 +251,7 @@ func (r *ContainerRuntime) containerCreationRoutine(
 		}
 	}(ctx, task)
 
-
 	logger.InfoLogger().Printf("555555555555555555555555555555")
-
 	// get wait channel
 	exitStatusC, err := task.Wait(ctx)
 	if err != nil {
@@ -267,9 +259,6 @@ func (r *ContainerRuntime) containerCreationRoutine(
 		revert(err)
 		return
 	}
-
-	logger.InfoLogger().Printf("666666666666666666666666666")
-
 	// if Overlay mode is active then attach network to the task
 	if model.GetNodeInfo().Overlay {
 		taskpid := int(task.Pid())
@@ -280,21 +269,14 @@ func (r *ContainerRuntime) containerCreationRoutine(
 			return
 		}
 	}
-
-	logger.InfoLogger().Printf("7777777777777777777777777777777777")
-
 	// execute the image's task
 	if err := task.Start(ctx); err != nil {
 		logger.ErrorLogger().Printf("ERROR: containerd task start failure: %v", err)
 		revert(err)
 		return
 	}
-
-	logger.InfoLogger().Printf("8888888888888888888888888888888888")
-
 	// adv startup finished
 	startup <- true
-
 	// wait for manual task kill or task finish
 	select {
 	case exitStatus := <-exitStatusC:
@@ -310,19 +292,15 @@ func (r *ContainerRuntime) containerCreationRoutine(
 	case <-*killChannel:
 		logger.InfoLogger().Printf("Kill channel message received for task %s", task.ID())
 	}
-
 	if service.Status != model.SERVICE_COMPLETED {
 		service.Status = model.SERVICE_DEAD
 	}
-
 	//detaching network
 	if model.GetNodeInfo().Overlay {
 		_ = requests.DetachNetworkFromTask(service.Sname, service.Instance)
 	}
 	statusChangeNotificationHandler(service)
 	r.removeContainer(container)
-
-	logger.InfoLogger().Printf("101010101010101010101010")
 }
 
 func getTotalCpuUsageByPid(pid int32) (float64, error) {

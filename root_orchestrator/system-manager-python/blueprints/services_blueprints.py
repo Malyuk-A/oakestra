@@ -37,7 +37,11 @@ class ServiceController(MethodView):
     )
     @jwt_auth_required()
     def get(self, serviceid):
-        """Get service for specific ID"""
+        """Get service for specific ID
+
+        Requires user to own the service
+        ---
+        """
         username = get_jwt_auth_identity()
         job = service_management.get_service(serviceid, username)
 
@@ -71,7 +75,11 @@ class ServiceController(MethodView):
     @serviceblp.response(200, content_type="application/json")
     @jwt_auth_required()
     def put(self, *args, serviceid):
-        """Update service with ID"""
+        """Update service with ID
+
+        Requires user to own the service
+        ---
+        """
         try:
             username = get_jwt_auth_identity()
             data = request.get_json()

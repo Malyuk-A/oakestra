@@ -25,9 +25,6 @@ var LogDirectory = flag.String("logs", "/tmp", "Directory for application's logs
 const MONITORING_CYCLE = time.Second * 2
 
 func main() {
-
-	logger.InfoLogger().Printf("AAAREeezzzzz")
-
 	flag.Parse()
 
 	//set log directory

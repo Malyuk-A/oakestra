@@ -1,6 +1,5 @@
 import logging
 
-from icecream import ic
 from mongodb_client import mongo_find_all_active_nodes
 
 
@@ -10,8 +9,6 @@ def calculate(app, job):
 
     # check here if job has any user preferences, e.g. on a specific node, cpu architecture,
     constraints = job.get("constraints")
-
-    print("CCCCCC", ic.format("DDDD", constraints))
 
     if constraints is not None:
         return constraint_based_scheduling(job, constraints)
@@ -112,9 +109,6 @@ def replicate(job):
 
 
 def extract_specs(node):
-
-    print("BBBBBBB", ic.format("AAAAAAAAAAAAAA", node))
-
     return {
         "available_cpu": node.get("current_cpu_cores_free", 0)
         * (100 - node.get("current_memory_percent"))
