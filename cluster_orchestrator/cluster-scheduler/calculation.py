@@ -1,5 +1,6 @@
 import logging
 
+from icecream import ic
 from mongodb_client import mongo_find_all_active_nodes
 
 
@@ -22,13 +23,16 @@ def constraint_based_scheduling(job, constraints):
         constraint_type = constraint.get("type")
         if constraint_type == "direct":
             return deploy_on_best_among_desired_nodes(job, constraint.get("node"))
-        if constraint_type == "extensions":
+        if constraint_type == "addons":
             for node in mongo_find_all_active_nodes():
+                print("AAAAAAAAA", ic.format(node, node["node_info"]))
                 node_info = node["node_info"]
                 if (
-                    node_info.get("extensions")
+                    node_info.get("supported_addons")
                     and constraint.get("needs")
-                    and set(constraint.get("needs")).issubset(set(node_info.get("extensions")))
+                    and set(constraint.get("needs")).issubset(
+                        set(node_info.get("supported_addons"))
+                    )
                 ):
                     filtered_active_nodes.append(node)
 

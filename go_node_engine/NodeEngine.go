@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"go_node_engine/extensions/flops"
+	"go_node_engine/addons/flops"
 	"go_node_engine/jobs"
 	"go_node_engine/logger"
 	"go_node_engine/model"
@@ -19,7 +19,7 @@ var clusterAddress = flag.String("a", "localhost", "Address of the cluster orche
 var clusterPort = flag.String("p", "10000", "Port of the cluster orchestrator")
 var overlayNetwork = flag.Int("n", -1, "Port of the NetManager component, if any. This enables the overlay network across nodes")
 var UnikernelSupport = flag.Bool("u", false, "Set to enable Unikernel support")
-var FederatedLearningSupport = flag.Bool("f", false, "Set to enable Federated Learning, including gathering of ML data.")
+var FederatedLearningSupport = flag.Bool("f", false, "Set to enable the Federated Learning addon FLOps, including gathering of ML data via a sidecar.")
 var LogDirectory = flag.String("logs", "/tmp", "Directory for application's logs")
 
 const MONITORING_CYCLE = time.Second * 2
@@ -40,7 +40,7 @@ func main() {
 	}
 
 	if *FederatedLearningSupport {
-		model.GetNodeInfo().AddEnabledExtensions(model.FEDERATED_LEARNING)
+		model.GetNodeInfo().AddSupportedAddons(model.FLOPS)
 		flops.HandleFLOpsDataManager()
 	}
 

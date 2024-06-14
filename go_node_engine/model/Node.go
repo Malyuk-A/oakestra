@@ -23,10 +23,9 @@ const (
 	CONTAINER_RUNTIME RuntimeType = "docker"
 	UNIKERNEL_RUNTIME RuntimeType = "unikernel"
 )
-
-type ExtensionType string
+type AddonType string
 const (
-	FEDERATED_LEARNING ExtensionType = "federated_learning"
+	FLOPS AddonType = "FLOps"
 )
 
 
@@ -50,7 +49,7 @@ type Node struct {
 	GpuMemUsage    float64           `json:"gpu_mem_used"`
 	GpuTotMem      float64           `json:"gpu_tot_mem"`
 	Technology     []RuntimeType     `json:"technology"`
-	Extensions	   []ExtensionType   `json:"extensions"`
+	SupportedAddons     []AddonType  `json:"supported_addons"`
 	Overlay        bool
 	LogDirectory   string
 	NetManagerPort int
@@ -68,7 +67,7 @@ func GetNodeInfo() *Node {
 			CpuArch:    runtime.GOARCH,
 			Port:       getPort(),
 			Technology: make([]RuntimeType, 0),
-			Extensions: make([]ExtensionType, 0),
+			SupportedAddons: make([]AddonType, 0),
 			Overlay:    false,
 		}
 	})
@@ -242,12 +241,12 @@ func (n *Node) GetSupportedTechnologyList() []RuntimeType {
 	return n.Technology
 }
 
-func (n *Node) AddEnabledExtensions(ext ExtensionType) {
-	n.Extensions = append(n.Extensions, ext)
+func (n *Node) AddSupportedAddons(ext AddonType) {
+	n.SupportedAddons = append(n.SupportedAddons, ext)
 }
 
-func (n *Node) GetEnabledExtensionsList() []ExtensionType {
-	return n.Extensions
+func (n *Node) GetSupportedAddonsList() []AddonType {
+	return n.SupportedAddons
 }
 
 func getGpuDriver() string {
