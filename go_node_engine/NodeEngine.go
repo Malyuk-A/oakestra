@@ -19,7 +19,10 @@ var clusterAddress = flag.String("a", "localhost", "Address of the cluster orche
 var clusterPort = flag.String("p", "10000", "Port of the cluster orchestrator")
 var overlayNetwork = flag.Int("n", -1, "Port of the NetManager component, if any. This enables the overlay network across nodes")
 var UnikernelSupport = flag.Bool("u", false, "Set to enable Unikernel support")
-var FederatedLearningSupport = flag.Bool("f", false, "Set to enable the Federated Learning addon FLOps, including gathering of ML data via a sidecar.")
+
+// Addons
+var FLOpsLearnerSupport = flag.Bool("l", false, "Enables the ML-data-server sidecar for data collection for FLOps learners.")
+
 var LogDirectory = flag.String("logs", "/tmp", "Directory for application's logs")
 
 const MONITORING_CYCLE = time.Second * 2
@@ -39,8 +42,8 @@ func main() {
 		defer unikernelRuntime.StopUnikernelRuntime()
 	}
 
-	if *FederatedLearningSupport {
-		model.GetNodeInfo().AddSupportedAddons(model.FLOPS)
+	if *FLOpsLearnerSupport {
+		model.GetNodeInfo().AddSupportedAddons(model.FLOPS_LEARNER)
 		flops.HandleFLOpsDataManager()
 	}
 

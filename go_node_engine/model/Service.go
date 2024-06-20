@@ -19,6 +19,7 @@ type Service struct {
 	Architectures   []string `json:"arch"`
 	Pid             int
 	OneShot			bool	 `json:"one_shot"`
+	Privileged      bool     `json:"privileged"`
 }
 
 type Resources struct {

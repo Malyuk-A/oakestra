@@ -26,7 +26,7 @@ const (
 
 type AddonType string
 const (
- 	FLOPS AddonType = "FLOps"
+	FLOPS_LEARNER AddonType = "FLOps-learner"
  )
 
 type Node struct {

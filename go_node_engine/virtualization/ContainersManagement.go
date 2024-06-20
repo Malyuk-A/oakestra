@@ -189,9 +189,12 @@ func (r *ContainerRuntime) containerCreationRoutine(
 		oci.WithHostname(hostname),
 		
 		oci.WithEnv(append([]string{fmt.Sprintf("HOSTNAME=%s", hostname)}, service.Env...)),
-
-		oci.WithDevices("/dev/fuse", "/dev/fuse", "rwm"),
 	}
+
+	if service.Privileged {
+		specOpts = append(specOpts, oci.WithDevices("/dev/fuse", "/dev/fuse", "rwm"))
+	}
+
 	//add user defined commands
 	if len(service.Commands) > 0 {
 		specOpts = append(specOpts, oci.WithProcessArgs(service.Commands...))
@@ -251,7 +254,6 @@ func (r *ContainerRuntime) containerCreationRoutine(
 		}
 	}(ctx, task)
 
-	logger.InfoLogger().Printf("555555555555555555555555555555")
 	// get wait channel
 	exitStatusC, err := task.Wait(ctx)
 	if err != nil {
