@@ -1,11 +1,13 @@
 import logging
 from typing import Union
 
+from icecream import ic
 from mongodb_client import mongo_find_all_active_nodes
 from oakestra_utils.types.statuses import NegativeSchedulingStatus
 
 
 def calculate(app, job: dict) -> Union[dict, NegativeSchedulingStatus]:
+    ic(0)
     print("calculating...")
     app.logger.info("calculating")
 
@@ -18,12 +20,14 @@ def calculate(app, job: dict) -> Union[dict, NegativeSchedulingStatus]:
 
 
 def constraint_based_scheduling(job: dict, constraints) -> Union[dict, NegativeSchedulingStatus]:
+    print(ic.format(1, constraints))
     filtered_active_nodes = []
     for constraint in constraints:
         constraint_type = constraint.get("type")
         if constraint_type == "direct":
             return deploy_on_best_among_desired_nodes(job, constraint.get("node"))
         if constraint_type == "addons":
+            ic(2)
             for node in mongo_find_all_active_nodes():
                 print("AAAAAAAAA", ic.format(node, node["node_info"]))
                 node_info = node["node_info"]
@@ -36,6 +40,7 @@ def constraint_based_scheduling(job: dict, constraints) -> Union[dict, NegativeS
                 ):
                     filtered_active_nodes.append(node)
 
+    print(ic.format(3, filtered_active_nodes))
     return greedy_load_balanced_algorithm(job=job, active_nodes=filtered_active_nodes)
 
 
