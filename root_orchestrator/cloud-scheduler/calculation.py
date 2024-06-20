@@ -1,6 +1,5 @@
 from typing import Union
 
-from icecream import ic
 from oakestra_utils.types.statuses import NegativeSchedulingStatus
 from resource_abstractor_client import cluster_operations
 

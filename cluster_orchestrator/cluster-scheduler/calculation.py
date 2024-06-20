@@ -1,7 +1,6 @@
 import logging
 from typing import Union
 
-from icecream import ic
 from mongodb_client import mongo_find_all_active_nodes
 from oakestra_utils.types.statuses import NegativeSchedulingStatus
 
