@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"go_node_engine/addons/flops"
 	"go_node_engine/jobs"
 	"go_node_engine/logger"
 	"go_node_engine/model"
@@ -29,6 +30,8 @@ var (
 	overlayNetwork   int
 	unikernelSupport bool
 	logDirectory     string
+	// Addons
+	flopsLearnerSupport bool
 )
 
 const MONITORING_CYCLE = time.Second * 2
@@ -44,6 +47,8 @@ func init() {
 	rootCmd.Flags().IntVarP(&overlayNetwork, "netmanagerPort", "n", 6000, "Port of the NetManager component, if any. This enables the overlay network across nodes. Use -1 to disable Overlay Network Mode.")
 	rootCmd.Flags().BoolVarP(&unikernelSupport, "unikernel", "u", false, "Enable Unikernel support. [qemu/kvm required]")
 	rootCmd.Flags().StringVarP(&logDirectory, "logs", "l", "/tmp", "Directory for application's logs")
+	// Addons
+	rootCmd.Flags().BoolVar(&flopsLearnerSupport, "flops-learner", false, "Enables the ML-data-server sidecar for data collection for FLOps learners.")
 }
 
 func startNodeEngine() error {
@@ -58,6 +63,12 @@ func startNodeEngine() error {
 		unikernelRuntime := virtualization.GetUnikernelRuntime()
 		defer unikernelRuntime.StopUnikernelRuntime()
 	}
+
+	if flopsLearnerSupport {
+		model.GetNodeInfo().AddSupportedAddons(model.FLOPS_LEARNER)
+		flops.HandleFLOpsDataManager()
+	}
+
 	// hadshake with the cluster orchestrator to get mqtt port and node id
 	handshakeResult := clusterHandshake()
 
