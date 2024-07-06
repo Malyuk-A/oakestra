@@ -1,12 +1,10 @@
 from typing import Union
 
-from icecream import ic
 from oakestra_utils.types.statuses import NegativeSchedulingStatus
 from resource_abstractor_client import cluster_operations
 
 
 def calculate(job: dict) -> Union[dict, NegativeSchedulingStatus]:
-    ic(0)
     print("calculating...")
     constraints = job.get("constraints")
     if constraints is not None and len(constraints) > 0:
@@ -16,7 +14,6 @@ def calculate(job: dict) -> Union[dict, NegativeSchedulingStatus]:
 
 
 def constraint_based_scheduling(job: dict, constraints) -> Union[dict, NegativeSchedulingStatus]:
-    print(ic.format(1, constraints))
     filtered_active_clusters = []
     active_clusters = list(cluster_operations.get_resources(active=True))
     for cluster in active_clusters:
@@ -44,7 +41,6 @@ def constraint_based_scheduling(job: dict, constraints) -> Union[dict, NegativeS
         if satisfying:
             filtered_active_clusters.append(cluster)
 
-    print(ic.format(6, filtered_active_clusters))
     return greedy_load_balanced_algorithm(job=job, active_clusters=filtered_active_clusters)
 
 
