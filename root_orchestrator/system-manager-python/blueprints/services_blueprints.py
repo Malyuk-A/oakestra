@@ -89,15 +89,6 @@ class ServiceController(MethodView):
             if status != 200:
                 abort(status, result)
             return {}
-
-            # username = get_jwt_auth_identity()
-            # data = request.get_json()
-            # replace = request.args.get("replace")
-            # job, status = service_management.update_service(username, data, serviceid, replace)
-            # if status != 200:
-            #     abort(status, job)
-            # return json_util.dumps(job)
-
         except ConnectionError as e:
             abort(404, {"message": e})
 
