@@ -40,7 +40,6 @@ def constraint_based_scheduling(job: dict, constraints) -> Union[dict, NegativeS
                 cluster_name = cluster.get("cluster_name")
                 if not (cluster_name and cluster_name in constraint.get("allowed")):
                     satisfying = False
-                    continue
 
         if satisfying:
             filtered_active_clusters.append(cluster)

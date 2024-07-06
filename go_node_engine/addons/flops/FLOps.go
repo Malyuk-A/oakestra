@@ -11,11 +11,11 @@ func HandleFLOpsDataManager() {
 	container_name := "ml_data_server"
 
 	cmd := exec.Command("docker", "ps", "-a", "--format", "{{.Names}}")
-    output, err := cmd.Output()
-    if err!= nil {
-        logger.ErrorLogger().Fatalln("Error:", err)
-        return
-    }
+	output, err := cmd.Output()
+	if err!= nil {
+		logger.ErrorLogger().Fatalln("Error:", err)
+		return
+	}
 
     var containerExists bool
 	lines := strings.Split(string(output), "\n")

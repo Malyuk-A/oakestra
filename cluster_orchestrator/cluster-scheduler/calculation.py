@@ -1,7 +1,6 @@
 import logging
 from typing import Union
 
-from icecream import ic
 from mongodb_client import mongo_find_all_active_nodes
 from oakestra_utils.types.statuses import NegativeSchedulingStatus
 
@@ -10,7 +9,6 @@ SUPPORTED_CONSTRAINT_TYPES = ["latency", "geo", "addons"]
 
 
 def calculate(app, job: dict) -> Union[dict, NegativeSchedulingStatus]:
-    ic(0)
     print("calculating...")
     app.logger.info("calculating")
 
@@ -24,7 +22,6 @@ def calculate(app, job: dict) -> Union[dict, NegativeSchedulingStatus]:
 
 
 def constraint_based_scheduling(job: dict, constraints) -> Union[dict, NegativeSchedulingStatus]:
-    print(ic.format(1, constraints))
     filtered_active_nodes = []
     for node in mongo_find_all_active_nodes():
         satisfying = True
@@ -43,12 +40,10 @@ def constraint_based_scheduling(job: dict, constraints) -> Union[dict, NegativeS
                     )
                 ):
                     satisfying = False
-                    continue
 
         if satisfying:
             filtered_active_nodes.append(node)
 
-    print(ic.format(3, filtered_active_nodes))
     return greedy_load_balanced_algorithm(job=job, active_nodes=filtered_active_nodes)
 
 

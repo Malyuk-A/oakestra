@@ -6,4 +6,3 @@ redis
 requests
 pymongo
 git+https://github.com/oakestra/oakestra.git@develop#subdirectory=libraries/oakestra_utils_library
-icecream
