@@ -7,7 +7,7 @@ import (
 )
 
 func HandleFLOpsDataManager() {
-	ml_data_server_image := "ghcr.io/malyuk-a/ml-data-server:latest"
+	ml_data_server_image := "ghcr.io/oakestra/addon-flops/ml-data-server:latest"
 	container_name := "ml_data_server"
 
 	cmd := exec.Command("docker", "ps", "-a", "--format", "{{.Names}}")
