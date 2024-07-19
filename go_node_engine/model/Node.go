@@ -26,8 +26,9 @@ const (
 
 type AddonType string
 const (
+	IMAGE_BUILDER AddonType = "image-builder"
 	FLOPS_LEARNER AddonType = "FLOps-learner"
- )
+)
 
 type Node struct {
 	Id              string            `json:"id"`

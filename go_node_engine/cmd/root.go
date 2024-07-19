@@ -9,7 +9,9 @@ import (
 	"go_node_engine/requests"
 	"go_node_engine/virtualization"
 	"os"
+	"os/exec"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -32,6 +34,7 @@ var (
 	logDirectory     string
 	// Addons
 	flopsLearnerSupport bool
+	imageBuilder bool
 )
 
 const MONITORING_CYCLE = time.Second * 2
@@ -49,6 +52,7 @@ func init() {
 	rootCmd.Flags().StringVarP(&logDirectory, "logs", "l", "/tmp", "Directory for application's logs")
 	// Addons
 	rootCmd.Flags().BoolVar(&flopsLearnerSupport, "flops-learner", false, "Enables the ML-data-server sidecar for data collection for FLOps learners.")
+	rootCmd.Flags().BoolVar(&imageBuilder, "image-builder", false, "Checks if the host has QEMU (apt's qemu-user-static) installed for building multi-platform images.")
 }
 
 func startNodeEngine() error {
@@ -62,6 +66,15 @@ func startNodeEngine() error {
 	if unikernelSupport {
 		unikernelRuntime := virtualization.GetUnikernelRuntime()
 		defer unikernelRuntime.StopUnikernelRuntime()
+	}
+
+	if imageBuilder {
+		cmd := exec.Command("dpkg", "-s", "qemu-user-static")
+		output, err := cmd.Output()
+		if err != nil || !strings.Contains(string(output), "ok installed") {
+			logger.ErrorLogger().Fatalf("Unable to find qemu-user-static apt package for multi-platform image-builder: %v\n", err)
+		}
+		model.GetNodeInfo().AddSupportedAddons(model.IMAGE_BUILDER)
 	}
 
 	if flopsLearnerSupport {
